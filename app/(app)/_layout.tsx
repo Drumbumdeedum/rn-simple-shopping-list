@@ -14,6 +14,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import Auth from "@/components/auth/Auth";
 import { AuthContext } from "@/components/provider/AuthProvider";
 import { useSession } from "@/context";
+import React from "react";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -38,14 +39,20 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      {session.isLoading && "Loading"}
-      {!session.session && <Auth />}
-      {session.session && (
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
+      {session.isLoading ? (
+        "LOADING"
+      ) : (
+        <>
+          {!session.session && <Auth />}
+          {session.session && (
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+          )}
+        </>
       )}
+
       <StatusBar style="auto" />
     </ThemeProvider>
   );
