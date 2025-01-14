@@ -9,6 +9,7 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
+  Animated,
 } from "react-native";
 import { useSession } from "@/context";
 import { router } from "expo-router";
@@ -76,9 +77,19 @@ export default function Auth() {
     null
   );
 
+  const emailLabelOpacity = useRef(new Animated.Value(0)).current;
+  const passwordLabelOpacity = useRef(new Animated.Value(0)).current;
+
   const handleFocus = (index: number): void => {
     const inputRef = inputRefs.current[index];
     setFocusedInputIndex(index);
+
+    Animated.timing(index === 0 ? emailLabelOpacity : passwordLabelOpacity, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+
     if (inputRef && scrollViewRef.current) {
       inputRef.measure(
         (
@@ -100,6 +111,18 @@ export default function Auth() {
 
   const handleBlur = (): void => {
     setFocusedInputIndex(null);
+
+    Animated.timing(emailLabelOpacity, {
+      toValue: 0,
+      duration: 50,
+      useNativeDriver: true,
+    }).start();
+
+    Animated.timing(passwordLabelOpacity, {
+      toValue: 0,
+      duration: 50,
+      useNativeDriver: true,
+    }).start();
   };
 
   return (
@@ -123,14 +146,11 @@ export default function Auth() {
           />
           <View style={styles.inputContainer}>
             <View>
-              <ThemedText
-                style={[
-                  styles.label,
-                  focusedInputIndex === 0 ? styles.labelVisible : "",
-                ]}
+              <Animated.View
+                style={[styles.label, { opacity: emailLabelOpacity }]}
               >
-                Email
-              </ThemedText>
+                <ThemedText>Email</ThemedText>
+              </Animated.View>
               <TextInput
                 ref={(ref) => (inputRefs.current[0] = ref)}
                 style={styles.input}
@@ -145,14 +165,11 @@ export default function Auth() {
               />
             </View>
             <View>
-              <ThemedText
-                style={[
-                  styles.label,
-                  focusedInputIndex === 1 ? styles.labelVisible : "",
-                ]}
+              <Animated.View
+                style={[styles.label, { opacity: passwordLabelOpacity }]}
               >
-                Password
-              </ThemedText>
+                <ThemedText>Password</ThemedText>
+              </Animated.View>
               <TextInput
                 ref={(ref) => (inputRefs.current[1] = ref)}
                 placeholder={focusedInputIndex === 1 ? undefined : "Password"}
