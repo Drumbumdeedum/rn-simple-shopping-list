@@ -114,13 +114,13 @@ export default function Auth() {
 
     Animated.timing(emailLabelOpacity, {
       toValue: 0,
-      duration: 50,
+      duration: 10,
       useNativeDriver: true,
     }).start();
 
     Animated.timing(passwordLabelOpacity, {
       toValue: 0,
-      duration: 50,
+      duration: 10,
       useNativeDriver: true,
     }).start();
   };
@@ -239,10 +239,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     paddingLeft: 3,
     paddingRight: 3,
-    opacity: 0,
-  },
-  labelVisible: {
-    opacity: 1,
   },
   flexRow: {
     display: "flex",
