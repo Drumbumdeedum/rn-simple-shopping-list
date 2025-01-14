@@ -89,12 +89,10 @@ export default function Auth() {
             <ThemedText>Email</ThemedText>
             <Input
               placeholder="Email"
-              //   leftIcon={{ type: 'font-awesome', name: 'envelope' }}
               onChangeText={(text: React.SetStateAction<string>) =>
                 setEmail(text)
               }
               value={email}
-              //   placeholder="email@address.com"
               autoCapitalize={"none"}
             />
           </View>
@@ -102,13 +100,11 @@ export default function Auth() {
             <ThemedText>Password</ThemedText>
             <Input
               placeholder="Password"
-              //   leftIcon={{ type: 'font-awesome', name: 'lock' }}
               onChangeText={(text: React.SetStateAction<string>) =>
                 setPassword(text)
               }
               value={password}
               secureTextEntry={true}
-              //   placeholder="Password"
               autoCapitalize={"none"}
             />
           </View>
