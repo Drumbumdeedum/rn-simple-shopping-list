@@ -1,20 +1,22 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Alert,
   View,
   AppState,
   Image,
   TouchableOpacity,
-  SafeAreaView,
+  ScrollView,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { useSession } from "@/context";
 import { router } from "expo-router";
 import { ThemedText } from "../ThemedText";
 import { supabase } from "@/utils/initSupabase";
 import { ThemedView } from "../ThemedView";
-import Input from "../ui/Input";
 import { StyleSheet } from "react-native";
-import ScrollView from "../ScrollView";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 AppState.addEventListener("change", (state) => {
   if (state === "active") {
@@ -68,78 +70,111 @@ export default function Auth() {
     setLoading(false);
   }
 
-  return (
-    <ScrollView
-      headerImage={
-        <Image
-          source={require("@/assets/images/auth_image.jpeg")}
-          style={{
-            height: 350,
-            width: 375,
-            bottom: 0,
-            left: 0,
-            position: "absolute",
-          }}
-        />
-      }
-    >
-      <View>
-        <View style={styles.container}>
-          <View>
-            <ThemedText>Email</ThemedText>
-            <Input
-              placeholder="Email"
-              onChangeText={(text: React.SetStateAction<string>) =>
-                setEmail(text)
-              }
-              value={email}
-              autoCapitalize={"none"}
-            />
-          </View>
-          <View>
-            <ThemedText>Password</ThemedText>
-            <Input
-              placeholder="Password"
-              onChangeText={(text: React.SetStateAction<string>) =>
-                setPassword(text)
-              }
-              value={password}
-              secureTextEntry={true}
-              autoCapitalize={"none"}
-            />
-          </View>
+  const scrollViewRef = useRef<ScrollView | null>(null);
+  const inputRefs = useRef<(TextInput | null)[]>([]);
 
-          <View>
-            <TouchableOpacity
-              disabled={loading}
-              style={styles.button}
-              onPress={() =>
-                viewType === "sign-in" ? signInWithEmail() : signUpWithEmail()
-              }
-            >
-              <ThemedText style={styles.buttonText}>
-                {viewType === "sign-in" ? "Sign in" : "Sign up"}
+  const handleFocus = (index: number): void => {
+    const inputRef = inputRefs.current[index];
+    if (inputRef && scrollViewRef.current) {
+      inputRef.measure(
+        (
+          _x: number,
+          _y: number,
+          _width: number,
+          height: number,
+          _pageX: number,
+          pageY: number
+        ) => {
+          scrollViewRef.current?.scrollTo({
+            y: pageY - height - 20,
+            animated: true,
+          });
+        }
+      );
+    }
+  };
+
+  return (
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
+      <SafeAreaView>
+        <ScrollView
+          contentContainerStyle={styles.container}
+          ref={scrollViewRef}
+        >
+          <Image
+            source={require("@/assets/images/auth_image.jpeg")}
+            style={{
+              height: 350,
+              width: 375,
+              bottom: 0,
+              left: 0,
+            }}
+          />
+          <View style={styles.inputContainer}>
+            <View>
+              <ThemedText>Email</ThemedText>
+              <TextInput
+                ref={(ref) => (inputRefs.current[0] = ref)}
+                style={styles.input}
+                placeholder="Email"
+                onChangeText={(text: React.SetStateAction<string>) =>
+                  setEmail(text)
+                }
+                value={email}
+                autoCapitalize={"none"}
+                onFocus={() => handleFocus(0)}
+              />
+            </View>
+            <View>
+              <ThemedText>Password</ThemedText>
+              <TextInput
+                ref={(ref) => (inputRefs.current[1] = ref)}
+                placeholder="Password"
+                style={styles.input}
+                onChangeText={(text: React.SetStateAction<string>) =>
+                  setPassword(text)
+                }
+                value={password}
+                secureTextEntry={true}
+                autoCapitalize={"none"}
+                onFocus={() => handleFocus(1)}
+              />
+            </View>
+            <View>
+              <TouchableOpacity
+                disabled={loading}
+                style={styles.button}
+                onPress={() =>
+                  viewType === "sign-in" ? signInWithEmail() : signUpWithEmail()
+                }
+              >
+                <ThemedText style={styles.buttonText}>
+                  {viewType === "sign-in" ? "Sign in" : "Sign up"}
+                </ThemedText>
+              </TouchableOpacity>
+            </View>
+            <ThemedView style={styles.flexRow}>
+              <ThemedText>
+                {viewType === "sign-in"
+                  ? "Don't have an account yet?"
+                  : "Already have an account?"}
               </ThemedText>
-            </TouchableOpacity>
+              <ThemedText
+                type="link"
+                onPress={() => {
+                  handleSwitchViewType();
+                }}
+              >
+                {viewType === "sign-in" ? "Sign up" : "Sign in"}
+              </ThemedText>
+            </ThemedView>
           </View>
-          <ThemedView style={styles.flexRow}>
-            <ThemedText>
-              {viewType === "sign-in"
-                ? "Don't have an account yet?"
-                : "Already have an account?"}
-            </ThemedText>
-            <ThemedText
-              type="link"
-              onPress={() => {
-                handleSwitchViewType();
-              }}
-            >
-              {viewType === "sign-in" ? "Sign up" : "Sign in"}
-            </ThemedText>
-          </ThemedView>
-        </View>
-      </View>
-    </ScrollView>
+        </ScrollView>
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -149,6 +184,12 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     gap: 16,
     borderStyle: "solid",
+  },
+  inputContainer: {
+    padding: 32,
+    display: "flex",
+    flexDirection: "column",
+    gap: 16,
   },
   flexRow: {
     display: "flex",
@@ -164,5 +205,11 @@ const styles = StyleSheet.create({
   buttonText: {
     textAlign: "center",
     color: "#fff",
+  },
+  input: {
+    padding: 12,
+    borderWidth: 1,
+    borderColor: "rgb(17, 24, 28)",
+    borderStyle: "solid",
   },
 });

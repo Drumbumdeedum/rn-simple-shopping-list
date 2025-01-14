@@ -5,8 +5,6 @@ import Animated, { useAnimatedRef } from "react-native-reanimated";
 import { ThemedView } from "./ThemedView";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const HEADER_HEIGHT = 250;
-
 type Props = PropsWithChildren<{
   headerImage: ReactElement;
 }>;
@@ -31,7 +29,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    height: HEADER_HEIGHT,
+    height: 350,
     overflow: "hidden",
   },
   content: {
