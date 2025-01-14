@@ -72,9 +72,13 @@ export default function Auth() {
 
   const scrollViewRef = useRef<ScrollView | null>(null);
   const inputRefs = useRef<(TextInput | null)[]>([]);
+  const [focusedInputIndex, setFocusedInputIndex] = useState<number | null>(
+    null
+  );
 
   const handleFocus = (index: number): void => {
     const inputRef = inputRefs.current[index];
+    setFocusedInputIndex(index);
     if (inputRef && scrollViewRef.current) {
       inputRef.measure(
         (
@@ -92,6 +96,10 @@ export default function Auth() {
         }
       );
     }
+  };
+
+  const handleBlur = (): void => {
+    setFocusedInputIndex(null);
   };
 
   return (
@@ -115,24 +123,29 @@ export default function Auth() {
           />
           <View style={styles.inputContainer}>
             <View>
-              <ThemedText>Email</ThemedText>
+              {focusedInputIndex === 0 && (
+                <ThemedText style={styles.label}>Email</ThemedText>
+              )}
               <TextInput
                 ref={(ref) => (inputRefs.current[0] = ref)}
                 style={styles.input}
-                placeholder="Email"
+                placeholder={focusedInputIndex === 0 ? undefined : "Email"}
                 onChangeText={(text: React.SetStateAction<string>) =>
                   setEmail(text)
                 }
                 value={email}
                 autoCapitalize={"none"}
                 onFocus={() => handleFocus(0)}
+                onBlur={handleBlur}
               />
             </View>
             <View>
-              <ThemedText>Password</ThemedText>
+              {focusedInputIndex === 1 && (
+                <ThemedText style={styles.label}>Password</ThemedText>
+              )}
               <TextInput
                 ref={(ref) => (inputRefs.current[1] = ref)}
-                placeholder="Password"
+                placeholder={focusedInputIndex === 1 ? undefined : "Password"}
                 style={styles.input}
                 onChangeText={(text: React.SetStateAction<string>) =>
                   setPassword(text)
@@ -141,6 +154,7 @@ export default function Auth() {
                 secureTextEntry={true}
                 autoCapitalize={"none"}
                 onFocus={() => handleFocus(1)}
+                onBlur={handleBlur}
               />
             </View>
             <View>
@@ -182,7 +196,6 @@ const styles = StyleSheet.create({
   container: {
     display: "flex",
     flexDirection: "column",
-    gap: 16,
     borderStyle: "solid",
   },
   inputContainer: {
@@ -190,6 +203,15 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     gap: 16,
+  },
+  label: {
+    position: "absolute",
+    bottom: 30,
+    left: 10,
+    zIndex: 9999,
+    backgroundColor: "#fff",
+    paddingLeft: 3,
+    paddingRight: 3,
   },
   flexRow: {
     display: "flex",
@@ -211,5 +233,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgb(17, 24, 28)",
     borderStyle: "solid",
+    borderRadius: 3,
   },
 });
