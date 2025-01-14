@@ -4,17 +4,17 @@ import {
   View,
   AppState,
   Image,
-  Button,
   TouchableOpacity,
+  SafeAreaView,
 } from "react-native";
 import { useSession } from "@/context";
 import { router } from "expo-router";
-import ParallaxScrollView from "../ParallaxScrollView";
 import { ThemedText } from "../ThemedText";
 import { supabase } from "@/utils/initSupabase";
 import { ThemedView } from "../ThemedView";
 import Input from "../ui/Input";
 import { StyleSheet } from "react-native";
+import ScrollView from "../ScrollView";
 
 AppState.addEventListener("change", (state) => {
   if (state === "active") {
@@ -69,8 +69,7 @@ export default function Auth() {
   }
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
+    <ScrollView
       headerImage={
         <Image
           source={require("@/assets/images/auth_image.jpeg")}
@@ -144,7 +143,7 @@ export default function Auth() {
           </ThemedView>
         </View>
       </View>
-    </ParallaxScrollView>
+    </ScrollView>
   );
 }
 
@@ -168,5 +167,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     textAlign: "center",
+    color: "#fff",
   },
 });
