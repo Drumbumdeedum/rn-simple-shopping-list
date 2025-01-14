@@ -6,6 +6,7 @@ import ParallaxScrollView from "../ParallaxScrollView";
 import { ThemedText } from "../ThemedText";
 import { supabase } from "@/utils/initSupabase";
 import { Input } from "../ui/Input";
+import { ThemedView } from "../ThemedView";
 
 AppState.addEventListener("change", (state) => {
   if (state === "active") {
@@ -15,11 +16,19 @@ AppState.addEventListener("change", (state) => {
   }
 });
 
+type AuthType = "sign-in" | "sign-up";
+
 export default function Auth() {
   const { signIn } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const [viewType, setViewType] = useState<AuthType>("sign-in");
+  const handleSwitchViewType = () => {
+    if (viewType === "sign-in") setViewType("sign-up");
+    if (viewType === "sign-up") setViewType("sign-in");
+  };
 
   async function signInWithEmail() {
     setLoading(true);
@@ -96,20 +105,31 @@ export default function Auth() {
               autoCapitalize={"none"}
             />
           </View>
+
           <View>
             <Button
-              title="Sign in"
+              title={viewType === "sign-in" ? "Sign in" : "Sign up"}
               disabled={loading}
-              onPress={() => signInWithEmail()}
+              onPress={() =>
+                viewType === "sign-in" ? signInWithEmail() : signUpWithEmail()
+              }
             />
           </View>
-          <View>
-            <Button
-              title="Sign up"
-              disabled={loading}
-              onPress={() => signUpWithEmail()}
-            />
-          </View>
+          <ThemedView>
+            <ThemedText>
+              {viewType === "sign-in"
+                ? "Don't have an account yet?"
+                : "Already have an account?"}
+            </ThemedText>
+            <ThemedText
+              type="link"
+              onPress={() => {
+                handleSwitchViewType();
+              }}
+            >
+              {viewType === "sign-in" ? "Sign up" : "Sign in"}
+            </ThemedText>
+          </ThemedView>
         </View>
       </View>
     </ParallaxScrollView>
