@@ -14,17 +14,16 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import Auth from "@/components/auth/Auth";
 import { useSession } from "@/context";
 import React from "react";
+import LoadingScreen from "@/components/LoadingScreen";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const session = useSession();
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require("../../assets/fonts/SpaceMono-Regular.ttf"),
   });
-
-  const session = useSession();
-  console.log(session);
 
   useEffect(() => {
     if (loaded) {
@@ -35,11 +34,10 @@ export default function RootLayout() {
   if (!loaded) {
     return null;
   }
-
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       {session.isLoading ? (
-        "LOADING"
+        <LoadingScreen />
       ) : (
         <>
           {!session.session && <Auth />}
@@ -51,7 +49,6 @@ export default function RootLayout() {
           )}
         </>
       )}
-
       <StatusBar style="auto" />
     </ThemeProvider>
   );
