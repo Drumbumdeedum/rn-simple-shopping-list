@@ -6,10 +6,8 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
-  TextInput,
   KeyboardAvoidingView,
   Platform,
-  Animated,
   useColorScheme,
 } from "react-native";
 import { useSession } from "@/context";
@@ -20,6 +18,7 @@ import { ThemedView } from "../ThemedView";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "@/constants/Colors";
+import LabeledInput from "../ui/LabeledInput";
 
 AppState.addEventListener("change", (state) => {
   if (state === "active") {
@@ -74,59 +73,6 @@ export default function Auth() {
   }
 
   const scrollViewRef = useRef<ScrollView | null>(null);
-  const inputRefs = useRef<(TextInput | null)[]>([]);
-  const [focusedInputIndex, setFocusedInputIndex] = useState<number | null>(
-    null
-  );
-
-  const emailLabelOpacity = useRef(new Animated.Value(0)).current;
-  const passwordLabelOpacity = useRef(new Animated.Value(0)).current;
-
-  const handleFocus = (index: number): void => {
-    const inputRef = inputRefs.current[index];
-    setFocusedInputIndex(index);
-
-    Animated.timing(index === 0 ? emailLabelOpacity : passwordLabelOpacity, {
-      toValue: 1,
-      duration: 300,
-      useNativeDriver: false,
-    }).start();
-
-    if (inputRef && scrollViewRef.current) {
-      inputRef.measure(
-        (
-          _x: number,
-          _y: number,
-          _width: number,
-          height: number,
-          _pageX: number,
-          pageY: number
-        ) => {
-          scrollViewRef.current?.scrollTo({
-            y: pageY - height - 20,
-            animated: true,
-          });
-        }
-      );
-    }
-  };
-
-  const handleBlur = (): void => {
-    setFocusedInputIndex(null);
-
-    Animated.timing(emailLabelOpacity, {
-      toValue: 0,
-      duration: 0,
-      useNativeDriver: false,
-    }).start();
-
-    Animated.timing(passwordLabelOpacity, {
-      toValue: 0,
-      duration: 0,
-      useNativeDriver: false,
-    }).start();
-  };
-
   const theme = useColorScheme() ?? "light";
 
   return (
@@ -165,89 +111,19 @@ export default function Auth() {
             }}
           />
           <View style={styles.inputContainer}>
-            <View>
-              <Animated.View
-                style={[styles.label, { opacity: emailLabelOpacity }]}
-              >
-                <ThemedText
-                  style={[
-                    styles.labelText,
-                    {
-                      backgroundColor:
-                        theme === "light"
-                          ? Colors.light.background
-                          : Colors.dark.background,
-                    },
-                  ]}
-                >
-                  Email
-                </ThemedText>
-              </Animated.View>
-              <TextInput
-                ref={(ref) => (inputRefs.current[0] = ref)}
-                style={[
-                  styles.input,
-                  {
-                    borderColor:
-                      theme === "light" ? Colors.light.text : Colors.dark.text,
-                  },
-                  {
-                    color:
-                      theme === "light" ? Colors.light.text : Colors.dark.text,
-                  },
-                ]}
-                placeholder={focusedInputIndex === 0 ? undefined : "Email"}
-                onChangeText={(text: React.SetStateAction<string>) =>
-                  setEmail(text)
-                }
-                value={email}
-                autoCapitalize={"none"}
-                onFocus={() => handleFocus(0)}
-                onBlur={handleBlur}
-              />
-            </View>
-            <View>
-              <Animated.View
-                style={[styles.label, { opacity: passwordLabelOpacity }]}
-              >
-                <ThemedText
-                  style={[
-                    styles.labelText,
-                    {
-                      backgroundColor:
-                        theme === "light"
-                          ? Colors.light.background
-                          : Colors.dark.background,
-                    },
-                  ]}
-                >
-                  Password
-                </ThemedText>
-              </Animated.View>
-              <TextInput
-                ref={(ref) => (inputRefs.current[1] = ref)}
-                placeholder={focusedInputIndex === 1 ? undefined : "Password"}
-                style={[
-                  styles.input,
-                  {
-                    borderColor:
-                      theme === "light" ? Colors.light.text : Colors.dark.text,
-                  },
-                  {
-                    color:
-                      theme === "light" ? Colors.light.text : Colors.dark.text,
-                  },
-                ]}
-                onChangeText={(text: React.SetStateAction<string>) =>
-                  setPassword(text)
-                }
-                value={password}
-                secureTextEntry={true}
-                autoCapitalize={"none"}
-                onFocus={() => handleFocus(1)}
-                onBlur={handleBlur}
-              />
-            </View>
+            <LabeledInput
+              setValue={(text) => setEmail(text)}
+              scrollViewRef={scrollViewRef}
+              label="Email"
+              placeholder="Email"
+            />
+            <LabeledInput
+              setValue={(text) => setPassword(text)}
+              scrollViewRef={scrollViewRef}
+              label="Password"
+              placeholder="Password"
+              secureTextEntry={true}
+            />
             <View>
               <TouchableOpacity
                 disabled={loading}
@@ -320,12 +196,5 @@ const styles = StyleSheet.create({
   buttonText: {
     textAlign: "center",
     color: "#fff",
-  },
-  input: {
-    padding: 12,
-    borderWidth: 1,
-    borderColor: "rgb(17, 24, 28)",
-    borderStyle: "solid",
-    borderRadius: 3,
   },
 });
