@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Animated,
+  useColorScheme,
 } from "react-native";
 import { useSession } from "@/context";
 import { router } from "expo-router";
@@ -18,6 +19,7 @@ import { supabase } from "@/utils/initSupabase";
 import { ThemedView } from "../ThemedView";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Colors } from "@/constants/Colors";
 
 AppState.addEventListener("change", (state) => {
   if (state === "active") {
@@ -87,7 +89,7 @@ export default function Auth() {
     Animated.timing(index === 0 ? emailLabelOpacity : passwordLabelOpacity, {
       toValue: 1,
       duration: 300,
-      useNativeDriver: true,
+      useNativeDriver: false,
     }).start();
 
     if (inputRef && scrollViewRef.current) {
@@ -114,26 +116,44 @@ export default function Auth() {
 
     Animated.timing(emailLabelOpacity, {
       toValue: 0,
-      duration: 10,
-      useNativeDriver: true,
+      duration: 0,
+      useNativeDriver: false,
     }).start();
 
     Animated.timing(passwordLabelOpacity, {
       toValue: 0,
-      duration: 10,
-      useNativeDriver: true,
+      duration: 0,
+      useNativeDriver: false,
     }).start();
   };
 
+  const theme = useColorScheme() ?? "light";
+
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
+      style={[
+        { flex: 1 },
+        {
+          backgroundColor:
+            theme === "light"
+              ? Colors.light.background
+              : Colors.dark.background,
+        },
+      ]}
     >
       <SafeAreaView>
         <ScrollView
-          contentContainerStyle={styles.container}
           ref={scrollViewRef}
+          contentContainerStyle={styles.container}
+          style={[
+            {
+              backgroundColor:
+                theme === "light"
+                  ? Colors.light.background
+                  : Colors.dark.background,
+            },
+          ]}
         >
           <Image
             source={require("@/assets/images/auth_image.jpeg")}
@@ -149,11 +169,33 @@ export default function Auth() {
               <Animated.View
                 style={[styles.label, { opacity: emailLabelOpacity }]}
               >
-                <ThemedText>Email</ThemedText>
+                <ThemedText
+                  style={[
+                    styles.labelText,
+                    {
+                      backgroundColor:
+                        theme === "light"
+                          ? Colors.light.background
+                          : Colors.dark.background,
+                    },
+                  ]}
+                >
+                  Email
+                </ThemedText>
               </Animated.View>
               <TextInput
                 ref={(ref) => (inputRefs.current[0] = ref)}
-                style={styles.input}
+                style={[
+                  styles.input,
+                  {
+                    borderColor:
+                      theme === "light" ? Colors.light.text : Colors.dark.text,
+                  },
+                  {
+                    color:
+                      theme === "light" ? Colors.light.text : Colors.dark.text,
+                  },
+                ]}
                 placeholder={focusedInputIndex === 0 ? undefined : "Email"}
                 onChangeText={(text: React.SetStateAction<string>) =>
                   setEmail(text)
@@ -168,12 +210,34 @@ export default function Auth() {
               <Animated.View
                 style={[styles.label, { opacity: passwordLabelOpacity }]}
               >
-                <ThemedText>Password</ThemedText>
+                <ThemedText
+                  style={[
+                    styles.labelText,
+                    {
+                      backgroundColor:
+                        theme === "light"
+                          ? Colors.light.background
+                          : Colors.dark.background,
+                    },
+                  ]}
+                >
+                  Password
+                </ThemedText>
               </Animated.View>
               <TextInput
                 ref={(ref) => (inputRefs.current[1] = ref)}
                 placeholder={focusedInputIndex === 1 ? undefined : "Password"}
-                style={styles.input}
+                style={[
+                  styles.input,
+                  {
+                    borderColor:
+                      theme === "light" ? Colors.light.text : Colors.dark.text,
+                  },
+                  {
+                    color:
+                      theme === "light" ? Colors.light.text : Colors.dark.text,
+                  },
+                ]}
                 onChangeText={(text: React.SetStateAction<string>) =>
                   setPassword(text)
                 }
@@ -236,9 +300,10 @@ const styles = StyleSheet.create({
     bottom: 31,
     left: 10,
     zIndex: 9999,
-    backgroundColor: "#fff",
-    paddingLeft: 3,
-    paddingRight: 3,
+  },
+  labelText: {
+    paddingLeft: 5,
+    paddingRight: 5,
   },
   flexRow: {
     display: "flex",
@@ -250,6 +315,7 @@ const styles = StyleSheet.create({
   button: {
     padding: 12,
     backgroundColor: "cornflowerblue",
+    borderRadius: 3,
   },
   buttonText: {
     textAlign: "center",
