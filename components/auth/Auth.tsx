@@ -1,12 +1,20 @@
 import React, { useState } from "react";
-import { Alert, View, AppState, Button, Image } from "react-native";
+import {
+  Alert,
+  View,
+  AppState,
+  Image,
+  Button,
+  TouchableOpacity,
+} from "react-native";
 import { useSession } from "@/context";
 import { router } from "expo-router";
 import ParallaxScrollView from "../ParallaxScrollView";
 import { ThemedText } from "../ThemedText";
 import { supabase } from "@/utils/initSupabase";
-import { Input } from "../ui/Input";
 import { ThemedView } from "../ThemedView";
+import Input from "../ui/Input";
+import { StyleSheet } from "react-native";
 
 AppState.addEventListener("change", (state) => {
   if (state === "active") {
@@ -65,10 +73,10 @@ export default function Auth() {
       headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
       headerImage={
         <Image
-          source={require("@/assets/images/partial-react-logo.png")}
+          source={require("@/assets/images/auth_image.jpeg")}
           style={{
-            height: 178,
-            width: 290,
+            height: 350,
+            width: 375,
             bottom: 0,
             left: 0,
             position: "absolute",
@@ -76,8 +84,8 @@ export default function Auth() {
         />
       }
     >
-      <View className="h-screen">
-        <View className="container gap-2">
+      <View>
+        <View style={styles.container}>
           <View>
             <ThemedText>Email</ThemedText>
             <Input
@@ -107,15 +115,19 @@ export default function Auth() {
           </View>
 
           <View>
-            <Button
-              title={viewType === "sign-in" ? "Sign in" : "Sign up"}
+            <TouchableOpacity
               disabled={loading}
+              style={styles.button}
               onPress={() =>
                 viewType === "sign-in" ? signInWithEmail() : signUpWithEmail()
               }
-            />
+            >
+              <ThemedText style={styles.buttonText}>
+                {viewType === "sign-in" ? "Sign in" : "Sign up"}
+              </ThemedText>
+            </TouchableOpacity>
           </View>
-          <ThemedView>
+          <ThemedView style={styles.flexRow}>
             <ThemedText>
               {viewType === "sign-in"
                 ? "Don't have an account yet?"
@@ -135,3 +147,26 @@ export default function Auth() {
     </ParallaxScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 16,
+    borderStyle: "solid",
+  },
+  flexRow: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+  },
+  button: {
+    padding: 12,
+    backgroundColor: "cornflowerblue",
+  },
+  buttonText: {
+    textAlign: "center",
+  },
+});
