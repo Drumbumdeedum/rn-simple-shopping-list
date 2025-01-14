@@ -123,9 +123,14 @@ export default function Auth() {
           />
           <View style={styles.inputContainer}>
             <View>
-              {focusedInputIndex === 0 && (
-                <ThemedText style={styles.label}>Email</ThemedText>
-              )}
+              <ThemedText
+                style={[
+                  styles.label,
+                  focusedInputIndex === 0 ? styles.labelVisible : "",
+                ]}
+              >
+                Email
+              </ThemedText>
               <TextInput
                 ref={(ref) => (inputRefs.current[0] = ref)}
                 style={styles.input}
@@ -140,9 +145,14 @@ export default function Auth() {
               />
             </View>
             <View>
-              {focusedInputIndex === 1 && (
-                <ThemedText style={styles.label}>Password</ThemedText>
-              )}
+              <ThemedText
+                style={[
+                  styles.label,
+                  focusedInputIndex === 1 ? styles.labelVisible : "",
+                ]}
+              >
+                Password
+              </ThemedText>
               <TextInput
                 ref={(ref) => (inputRefs.current[1] = ref)}
                 placeholder={focusedInputIndex === 1 ? undefined : "Password"}
@@ -206,12 +216,16 @@ const styles = StyleSheet.create({
   },
   label: {
     position: "absolute",
-    bottom: 30,
+    bottom: 31,
     left: 10,
     zIndex: 9999,
     backgroundColor: "#fff",
     paddingLeft: 3,
     paddingRight: 3,
+    opacity: 0,
+  },
+  labelVisible: {
+    opacity: 1,
   },
   flexRow: {
     display: "flex",
