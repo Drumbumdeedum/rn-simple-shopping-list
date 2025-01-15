@@ -31,6 +31,13 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
+  useEffect(() => {
+    if (!session.isLoading && session.session) {
+      const sessionObject = JSON.parse(session.session);
+      console.log(sessionObject.user.id);
+    }
+  }, [session]);
+
   if (!loaded) {
     return null;
   }

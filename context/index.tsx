@@ -1,6 +1,7 @@
 import React from "react";
 import { useStorageState } from "./useStorageState";
 import { supabase } from "../utils/initSupabase";
+import useUserStore from "@/state/userStore";
 
 const AuthContext = React.createContext<{
   signIn: (email: string, password: string) => void | any;
@@ -27,7 +28,7 @@ export function useSession() {
 
 export function SessionProvider(props: React.PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState("session");
-  const [[isUserLoading, user], setUser] = useStorageState("user");
+  const { user, setUser } = useUserStore();
 
   return (
     <AuthContext.Provider
