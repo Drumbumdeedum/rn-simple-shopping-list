@@ -44,13 +44,23 @@ export default function HomeScreen() {
           />
         </TouchableOpacity>
       </ThemedView>
-      <ThemedView>
+      <ThemedView style={styles.listContainer}>
         <FlatList
           style={styles.shoppingLists}
           data={shoppingLists}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           renderItem={({ item }) => (
-            <ThemedView style={styles.listCard}>
+            <ThemedView
+              style={[
+                styles.listCard,
+                {
+                  backgroundColor:
+                    theme === "light"
+                      ? Colors.light.elevatedBackground
+                      : Colors.dark.elevatedBackground,
+                },
+              ]}
+            >
               <ThemedText>{item.name}</ThemedText>
             </ThemedView>
           )}
