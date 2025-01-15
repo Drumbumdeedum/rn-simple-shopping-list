@@ -1,61 +1,59 @@
-import { Image, StyleSheet, Platform } from "react-native";
+import {
+  Image,
+  StyleSheet,
+  Platform,
+  ScrollView,
+  Button,
+  TouchableOpacity,
+  useColorScheme,
+} from "react-native";
 
 import { HelloWave } from "@/components/HelloWave";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { useSession } from "@/context";
 import useUserStore from "@/state/userStore";
+import ThemedInput from "@/components/ui/ThemedInput";
+import { IconSymbol } from "@/components/ui/IconSymbol";
+import { Colors } from "@/constants/Colors";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
-  const { signOut } = useSession();
   const { user, setUser } = useUserStore();
+  const theme = useColorScheme();
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
-      headerImage={
-        <Image
-          source={require("@/assets/images/partial-react-logo.png")}
-          style={styles.reactLogo}
-        />
-      }
+    <SafeAreaView
+      style={[
+        {
+          backgroundColor:
+            theme === "light"
+              ? Colors.light.background
+              : Colors.dark.background,
+        },
+      ]}
     >
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">
-          SIJA BUBKÁM ITT LESZNEK A HAMIHAMIK!
-        </ThemedText>
-        <HelloWave />
+      <ThemedView style={styles.header}>
+        <ThemedInput placeholder="List name" />
+        <TouchableOpacity>
+          <IconSymbol
+            size={32}
+            name="plus.circle"
+            color={theme === "light" ? Colors.light.text : Colors.dark.text}
+          />
+        </TouchableOpacity>
       </ThemedView>
-      <ThemedView>
-        <ThemedText
-          type="link"
-          onPress={() => {
-            signOut();
-          }}
-        >
-          Sign Out
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      <ScrollView></ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  header: {
+    padding: 18,
+    display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
+    justifyContent: "center",
+    gap: 12,
   },
 });
