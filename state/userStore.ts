@@ -1,8 +1,9 @@
+import { User } from "@/types";
 import { create } from "zustand";
 
 interface UserState {
-  user: any;
-  setUser: (newUser: any) => void;
+  user: User | null;
+  setUser: (newUser: User) => void;
 }
 
 const useUserStore = create<UserState>((set) => ({

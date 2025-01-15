@@ -1,29 +1,31 @@
 import {
-  Image,
   StyleSheet,
-  Platform,
   ScrollView,
-  Button,
   TouchableOpacity,
   useColorScheme,
+  FlatList,
+  View,
 } from "react-native";
 
-import { HelloWave } from "@/components/HelloWave";
-import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import useUserStore from "@/state/userStore";
 import ThemedInput from "@/components/ui/ThemedInput";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { Colors } from "@/constants/Colors";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { fetchShoppingListsByUserId } from "@/hooks/shoppingList";
+import useShoppingListStore from "@/state/shoppingListStore";
+import { ThemedText } from "@/components/ThemedText";
 
 export default function HomeScreen() {
   const { user, setUser } = useUserStore();
+  const { shoppingLists } = useShoppingListStore();
   const theme = useColorScheme();
 
   return (
     <SafeAreaView
       style={[
+        { flex: 1 },
         {
           backgroundColor:
             theme === "light"
@@ -38,11 +40,22 @@ export default function HomeScreen() {
           <IconSymbol
             size={32}
             name="plus.circle"
-            color={theme === "light" ? Colors.light.text : Colors.dark.text}
+            color={theme === "light" ? Colors.light.tint : Colors.dark.tint}
           />
         </TouchableOpacity>
       </ThemedView>
-      <ScrollView></ScrollView>
+      <ThemedView>
+        <FlatList
+          style={styles.shoppingLists}
+          data={shoppingLists}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
+          renderItem={({ item }) => (
+            <ThemedView style={styles.listCard}>
+              <ThemedText>{item.name}</ThemedText>
+            </ThemedView>
+          )}
+        />
+      </ThemedView>
     </SafeAreaView>
   );
 }
@@ -55,5 +68,28 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 12,
+  },
+  listContainer: {
+    display: "flex",
+    flex: 1,
+  },
+  shoppingLists: {
+    padding: 12,
+    display: "flex",
+    flexDirection: "column",
+  },
+  listCard: {
+    padding: 18,
+    borderRadius: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    elevation: 10,
+  },
+  separator: {
+    height: 18,
+    opacity: 0,
+    backgroundColor: "transparent",
   },
 });
