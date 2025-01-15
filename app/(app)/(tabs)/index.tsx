@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
   listCard: {
     padding: 18,
     borderRadius: 5,
+    boxShadow: "0px 5px 05px rgba(0, 0, 0, 0.15)",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.15,

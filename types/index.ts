@@ -6,12 +6,7 @@ export interface User {
 export interface ShoppingListAccessWithListsResponse {
   profile_id: string;
   shopping_list_id: string;
-  shopping_lists: {
-    id: string;
-    created_at: string;
-    creator_profile_id: string;
-    name: string;
-  }[];
+  shopping_lists: ShoppingList[];
 }
 
 export interface ShoppingList {
