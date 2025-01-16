@@ -23,7 +23,7 @@ import useShoppingListItems from "@/hooks/shoppingListItem/useShoppingListItems"
 
 const ShoppingList = () => {
   const { id } = useLocalSearchParams();
-  if (!id && typeof id !== "string") return;
+  if (!id) return;
   const { listItems } = useShoppingListItems(id as string);
   const [itemName, setItemName] = useState<string>("");
   const router = useRouter();

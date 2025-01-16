@@ -7,6 +7,7 @@ export const fetchShoppingListItemsByShoppingListId = async (
   const { data } = await supabase
     .from("shopping_list_items")
     .select("*")
+    .order("checked", { ascending: true })
     .eq("shopping_list_id", shoppingListId);
   return data as ShoppingListItem[];
 };
