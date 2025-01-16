@@ -15,3 +15,11 @@ export interface ShoppingList {
   creator_profile_id: string;
   name: string;
 }
+
+export interface ShoppingListItem {
+  id: string;
+  created_at: string;
+  shopping_list_id: string;
+  name: string;
+  checked: boolean;
+}

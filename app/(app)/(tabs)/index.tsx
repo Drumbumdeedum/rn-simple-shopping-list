@@ -56,18 +56,17 @@ export default function HomeScreen() {
                 pathname: "/shoppingList/[id]",
                 params: { id: item.id },
               }}
+              style={[
+                styles.listCard,
+                {
+                  backgroundColor:
+                    theme === "light"
+                      ? Colors.light.elevatedBackground
+                      : Colors.dark.elevatedBackground,
+                },
+              ]}
             >
-              <TouchableOpacity
-                style={[
-                  styles.listCard,
-                  {
-                    backgroundColor:
-                      theme === "light"
-                        ? Colors.light.elevatedBackground
-                        : Colors.dark.elevatedBackground,
-                  },
-                ]}
-              >
+              <TouchableOpacity>
                 <ThemedText>{item.name}</ThemedText>
                 <View style={styles.progressBar}>
                   <View
@@ -116,6 +115,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     gap: 18,
+    width: "100%",
   },
   separator: {
     height: 12,
