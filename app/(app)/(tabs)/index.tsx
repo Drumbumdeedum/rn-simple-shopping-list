@@ -16,6 +16,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { fetchShoppingListsByUserId } from "@/hooks/shoppingList";
 import useShoppingListStore from "@/state/shoppingListStore";
 import { ThemedText } from "@/components/ThemedText";
+import { Link } from "expo-router";
 
 export default function HomeScreen() {
   const { user, setUser } = useUserStore();
@@ -50,19 +51,34 @@ export default function HomeScreen() {
           data={shoppingLists}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           renderItem={({ item }) => (
-            <ThemedView
-              style={[
-                styles.listCard,
-                {
-                  backgroundColor:
-                    theme === "light"
-                      ? Colors.light.elevatedBackground
-                      : Colors.dark.elevatedBackground,
-                },
-              ]}
+            <Link
+              href={{
+                pathname: "/shoppingList/[id]",
+                params: { id: item.id },
+              }}
             >
-              <ThemedText>{item.name}</ThemedText>
-            </ThemedView>
+              <TouchableOpacity
+                style={[
+                  styles.listCard,
+                  {
+                    backgroundColor:
+                      theme === "light"
+                        ? Colors.light.elevatedBackground
+                        : Colors.dark.elevatedBackground,
+                  },
+                ]}
+              >
+                <ThemedText>{item.name}</ThemedText>
+                <View style={styles.progressBar}>
+                  <View
+                    style={[
+                      styles.progressFill,
+                      { width: `${Math.random() * 100}%` },
+                    ]}
+                  />
+                </View>
+              </TouchableOpacity>
+            </Link>
           )}
         />
       </ThemedView>
@@ -97,10 +113,26 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 10,
     elevation: 10,
+    display: "flex",
+    flexDirection: "column",
+    gap: 18,
   },
   separator: {
-    height: 18,
+    height: 12,
     opacity: 0,
     backgroundColor: "transparent",
+  },
+  progressBar: {
+    width: "100%",
+    height: 20,
+    backgroundColor: "#e0e0e0",
+    borderRadius: 10,
+    overflow: "hidden",
+    marginBottom: 20,
+  },
+  progressFill: {
+    height: "100%",
+    backgroundColor: "#4caf50",
+    borderRadius: 10,
   },
 });
