@@ -28,7 +28,6 @@ export function useSession() {
 
 export function SessionProvider(props: React.PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState("session");
-  const { user, setUser } = useUserStore();
 
   return (
     <AuthContext.Provider
@@ -44,9 +43,7 @@ export function SessionProvider(props: React.PropsWithChildren) {
               error,
             };
           }
-          // Perform sign-in logic here
           setSession(JSON.stringify(data?.session));
-          setUser(JSON.stringify(data?.user));
           return true;
         },
         signOut: () => {

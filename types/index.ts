@@ -12,7 +12,7 @@ export interface ShoppingListAccessWithListsResponse {
 export interface ShoppingList {
   id: string;
   created_at: string;
-  creator_profile_id: string;
+  user_id: string;
   name: string;
 }
 

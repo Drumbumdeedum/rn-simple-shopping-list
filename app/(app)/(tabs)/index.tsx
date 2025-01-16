@@ -1,6 +1,5 @@
 import {
   StyleSheet,
-  ScrollView,
   TouchableOpacity,
   useColorScheme,
   FlatList,
@@ -13,15 +12,22 @@ import ThemedInput from "@/components/ui/ThemedInput";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { Colors } from "@/constants/Colors";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { fetchShoppingListsByUserId } from "@/hooks/shoppingList";
 import useShoppingListStore from "@/state/shoppingListStore";
 import { ThemedText } from "@/components/ThemedText";
 import { Link } from "expo-router";
+import { useState } from "react";
+import { createNewShoppingList } from "@/hooks/shoppingList";
+import { useSession } from "@/context";
 
 export default function HomeScreen() {
-  const { user, setUser } = useUserStore();
+  const { user } = useUserStore();
   const { shoppingLists } = useShoppingListStore();
   const theme = useColorScheme();
+  const [listName, setListName] = useState<string>("");
+
+  const handleCreateNewShoppingList = () => {
+    if (user) createNewShoppingList(user.id, listName);
+  };
 
   return (
     <SafeAreaView
@@ -36,8 +42,12 @@ export default function HomeScreen() {
       ]}
     >
       <ThemedView style={styles.header}>
-        <ThemedInput placeholder="List name" />
-        <TouchableOpacity>
+        <ThemedInput
+          placeholder="List name"
+          value={listName}
+          onChange={(e) => setListName(e.nativeEvent.text)}
+        />
+        <TouchableOpacity onPress={handleCreateNewShoppingList}>
           <IconSymbol
             size={32}
             name="plus.circle"

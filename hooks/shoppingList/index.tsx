@@ -10,7 +10,7 @@ export const fetchShoppingListsByUserId = async (
       `
         profile_id, 
         shopping_list_id, 
-        shopping_lists ( id, created_at, creator_profile_id, name )
+        shopping_lists ( id, created_at, user_id, name )
       `
     )
     .eq("profile_id", userId);
@@ -20,4 +20,15 @@ export const fetchShoppingListsByUserId = async (
     .reduce((total, current) => {
       return total.concat(current);
     }, []);
+};
+
+export const createNewShoppingList = async (
+  userId: string,
+  listName: string
+) => {
+  console.log(userId);
+  const { data } = await supabase.from("shopping_lists").insert({
+    user_id: userId,
+    name: listName,
+  });
 };

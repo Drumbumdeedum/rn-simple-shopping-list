@@ -3,6 +3,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   useColorScheme,
+  View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -13,6 +14,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "@/constants/Colors";
+import { IconSymbol } from "@/components/ui/IconSymbol";
 
 const ShoppingList = () => {
   const { id } = useLocalSearchParams();
@@ -29,11 +31,30 @@ const ShoppingList = () => {
   }, []);
 
   return (
-    <SafeAreaView style={styles.listContainer}>
+    <SafeAreaView
+      style={[
+        styles.listContainer,
+        { flex: 1 },
+        {
+          backgroundColor:
+            theme === "light"
+              ? Colors.light.background
+              : Colors.dark.background,
+        },
+      ]}
+    >
       <ThemedView style={styles.listContainer}>
         <ThemedView style={styles.header}>
-          <TouchableOpacity onPress={() => router.push("/")}>
-            <ThemedText> {"< BACK"}</ThemedText>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.push("/")}
+          >
+            <IconSymbol
+              size={18}
+              name="chevron.left"
+              color={theme === "light" ? Colors.light.tint : Colors.dark.tint}
+            />
+            <ThemedText type="link">Back</ThemedText>
           </TouchableOpacity>
         </ThemedView>
         <FlatList
@@ -71,6 +92,13 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     gap: 12,
+  },
+  backButton: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
   },
   listContainer: {
     display: "flex",

@@ -42,6 +42,7 @@ export default function RootLayout() {
       const sessionObject = JSON.parse(session.session);
       const fetchUser = async (id: string) => {
         const resultUser = await fetchUserById(id);
+        console.log(resultUser);
         setUser(resultUser);
         const resultLists = await fetchShoppingListsByUserId(resultUser.id);
         setShoppingLists(resultLists);
