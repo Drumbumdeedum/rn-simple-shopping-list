@@ -25,3 +25,15 @@ export const createNewShoppingListItem = async (
     .single();
   return data;
 };
+
+export const updateShoppingListItemChecked = async (
+  id: string,
+  checked: boolean
+) => {
+  await supabase
+    .from("shopping_list_items")
+    .update({
+      checked: checked,
+    })
+    .eq("id", id);
+};

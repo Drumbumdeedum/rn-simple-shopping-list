@@ -4,11 +4,11 @@ import {
   TouchableOpacity,
   useColorScheme,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useRef, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
   createNewShoppingListItem,
-  fetchShoppingListItemsByShoppingListId,
+  updateShoppingListItemChecked,
 } from "@/hooks/shoppingListItem";
 import { ShoppingListItem } from "@/types";
 import { ThemedView } from "@/components/ThemedView";
@@ -18,44 +18,28 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "@/constants/Colors";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import ThemedInput from "@/components/ui/ThemedInput";
-import { supabase } from "@/utils/initSupabase";
+import { TextInput } from "react-native-gesture-handler";
+import useShoppingListItems from "@/hooks/shoppingListItem/useShoppingListItems";
 
 const ShoppingList = () => {
   const { id } = useLocalSearchParams();
-  const [listItems, setListItems] = useState<ShoppingListItem[]>([]);
+  if (!id && typeof id !== "string") return;
+  const { listItems } = useShoppingListItems(id as string);
   const [itemName, setItemName] = useState<string>("");
   const router = useRouter();
   const theme = useColorScheme();
-
-  useEffect(() => {
-    const fetchItems = async () => {
-      const items = await fetchShoppingListItemsByShoppingListId(id as string);
-      setListItems(items);
-    };
-    fetchItems();
-  }, []);
-
-  useEffect(() => {
-    const channel = supabase
-      .channel("insert_new_shopping_list_item")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "shopping_list_items" },
-        (payload) => {
-          if (payload && payload.new && payload.new.shopping_list_id === id) {
-            setListItems((prev) => [...prev, payload.new as ShoppingListItem]);
-          }
-        }
-      )
-      .subscribe();
-    return () => {
-      channel.unsubscribe();
-    };
-  }, []);
+  const inputRef = useRef<TextInput>(null);
 
   const handleCreateNewItem = async () => {
     if (id && typeof id === "string") {
       await createNewShoppingListItem(id, itemName);
+      setItemName("");
+    }
+  };
+
+  const handleItemChecked = async (item: ShoppingListItem) => {
+    if (id && typeof id === "string") {
+      await updateShoppingListItemChecked(item.id, !item.checked);
     }
   };
 
@@ -85,9 +69,11 @@ const ShoppingList = () => {
             />
           </TouchableOpacity>
           <ThemedInput
-            placeholder="List name"
+            ref={inputRef}
+            placeholder="New item"
             value={itemName}
             onChange={(e) => setItemName(e.nativeEvent.text)}
+            onSubmitEditing={handleCreateNewItem}
           />
           <TouchableOpacity onPress={handleCreateNewItem}>
             <IconSymbol
@@ -103,6 +89,7 @@ const ShoppingList = () => {
           ItemSeparatorComponent={() => <ThemedView style={styles.separator} />}
           renderItem={({ item }) => (
             <TouchableOpacity
+              onPress={() => handleItemChecked(item)}
               style={[
                 styles.listCard,
                 {
