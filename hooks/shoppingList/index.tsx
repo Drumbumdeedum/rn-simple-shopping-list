@@ -8,12 +8,12 @@ export const fetchShoppingListsByUserId = async (
     .from("shopping_lists_access")
     .select(
       `
-        profile_id, 
+        user_id, 
         shopping_list_id, 
         shopping_lists ( id, created_at, user_id, name )
       `
     )
-    .eq("profile_id", userId);
+    .eq("user_id", userId);
   const listAccessWithLists = data as ShoppingListAccessWithListsResponse[];
   return listAccessWithLists
     .map((la) => la.shopping_lists)
@@ -25,10 +25,14 @@ export const fetchShoppingListsByUserId = async (
 export const createNewShoppingList = async (
   userId: string,
   listName: string
-) => {
-  console.log(userId);
-  const { data } = await supabase.from("shopping_lists").insert({
-    user_id: userId,
-    name: listName,
-  });
+): Promise<ShoppingList> => {
+  const { data } = await supabase
+    .from("shopping_lists")
+    .insert({
+      user_id: userId,
+      name: listName,
+    })
+    .select("*")
+    .single();
+  return data as ShoppingList;
 };

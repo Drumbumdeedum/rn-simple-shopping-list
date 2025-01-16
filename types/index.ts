@@ -4,7 +4,7 @@ export interface User {
 }
 
 export interface ShoppingListAccessWithListsResponse {
-  profile_id: string;
+  user_id: string;
   shopping_list_id: string;
   shopping_lists: ShoppingList[];
 }

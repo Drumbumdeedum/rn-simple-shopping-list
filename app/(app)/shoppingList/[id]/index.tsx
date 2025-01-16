@@ -3,11 +3,13 @@ import {
   StyleSheet,
   TouchableOpacity,
   useColorScheme,
-  View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { fetchShoppingListItemsByShoppingListId } from "@/hooks/shoppingListItems";
+import {
+  createNewShoppingListItem,
+  fetchShoppingListItemsByShoppingListId,
+} from "@/hooks/shoppingListItem";
 import { ShoppingListItem } from "@/types";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
@@ -15,10 +17,13 @@ import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "@/constants/Colors";
 import { IconSymbol } from "@/components/ui/IconSymbol";
+import ThemedInput from "@/components/ui/ThemedInput";
+import { supabase } from "@/utils/initSupabase";
 
 const ShoppingList = () => {
   const { id } = useLocalSearchParams();
   const [listItems, setListItems] = useState<ShoppingListItem[]>([]);
+  const [itemName, setItemName] = useState<string>("");
   const router = useRouter();
   const theme = useColorScheme();
 
@@ -29,6 +34,30 @@ const ShoppingList = () => {
     };
     fetchItems();
   }, []);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel("insert_new_shopping_list_item")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "shopping_list_items" },
+        (payload) => {
+          if (payload && payload.new && payload.new.shopping_list_id === id) {
+            setListItems((prev) => [...prev, payload.new as ShoppingListItem]);
+          }
+        }
+      )
+      .subscribe();
+    return () => {
+      channel.unsubscribe();
+    };
+  }, []);
+
+  const handleCreateNewItem = async () => {
+    if (id && typeof id === "string") {
+      await createNewShoppingListItem(id, itemName);
+    }
+  };
 
   return (
     <SafeAreaView
@@ -50,11 +79,22 @@ const ShoppingList = () => {
             onPress={() => router.push("/")}
           >
             <IconSymbol
-              size={18}
+              size={24}
               name="chevron.left"
               color={theme === "light" ? Colors.light.tint : Colors.dark.tint}
             />
-            <ThemedText type="link">Back</ThemedText>
+          </TouchableOpacity>
+          <ThemedInput
+            placeholder="List name"
+            value={itemName}
+            onChange={(e) => setItemName(e.nativeEvent.text)}
+          />
+          <TouchableOpacity onPress={handleCreateNewItem}>
+            <IconSymbol
+              size={32}
+              name="plus.circle"
+              color={theme === "light" ? Colors.light.tint : Colors.dark.tint}
+            />
           </TouchableOpacity>
         </ThemedView>
         <FlatList
@@ -91,6 +131,8 @@ const styles = StyleSheet.create({
     padding: 18,
     display: "flex",
     flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 12,
   },
   backButton: {

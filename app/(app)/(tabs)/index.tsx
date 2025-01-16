@@ -17,16 +17,18 @@ import { ThemedText } from "@/components/ThemedText";
 import { Link } from "expo-router";
 import { useState } from "react";
 import { createNewShoppingList } from "@/hooks/shoppingList";
-import { useSession } from "@/context";
 
 export default function HomeScreen() {
+  const { shoppingLists, addShoppingList } = useShoppingListStore();
   const { user } = useUserStore();
-  const { shoppingLists } = useShoppingListStore();
   const theme = useColorScheme();
   const [listName, setListName] = useState<string>("");
 
-  const handleCreateNewShoppingList = () => {
-    if (user) createNewShoppingList(user.id, listName);
+  const handleCreateNewShoppingList = async () => {
+    if (user) {
+      const result = await createNewShoppingList(user.id, listName);
+      addShoppingList(result);
+    }
   };
 
   return (
@@ -108,6 +110,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flex: 1,
   },
+
   shoppingLists: {
     padding: 12,
     display: "flex",
