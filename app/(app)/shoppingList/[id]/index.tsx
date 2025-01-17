@@ -3,6 +3,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   useColorScheme,
+  View,
 } from "react-native";
 import React, { useRef, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -16,10 +17,10 @@ import { ThemedText } from "@/components/ThemedText";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "@/constants/Colors";
-import { IconSymbol } from "@/components/ui/IconSymbol";
 import ThemedInput from "@/components/ui/ThemedInput";
 import { TextInput } from "react-native-gesture-handler";
 import useShoppingListItems from "@/hooks/shoppingListItem/useShoppingListItems";
+import { Entypo } from "@expo/vector-icons";
 
 const ShoppingList = () => {
   const { id } = useLocalSearchParams();
@@ -57,15 +58,23 @@ const ShoppingList = () => {
       ]}
     >
       <ThemedView style={styles.listContainer}>
-        <ThemedView style={styles.header}>
+        <ThemedView
+          style={[
+            styles.header,
+            {
+              borderColor:
+                theme === "light" ? Colors.light.icon : Colors.dark.icon,
+            },
+          ]}
+        >
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => router.push("/")}
           >
-            <IconSymbol
+            <Entypo
+              name="chevron-left"
               size={24}
-              name="chevron.left"
-              color={theme === "light" ? Colors.light.tint : Colors.dark.tint}
+              color={Colors[theme ?? "light"].tint}
             />
           </TouchableOpacity>
           <ThemedInput
@@ -76,10 +85,10 @@ const ShoppingList = () => {
             onSubmitEditing={handleCreateNewItem}
           />
           <TouchableOpacity onPress={handleCreateNewItem}>
-            <IconSymbol
-              size={32}
-              name="plus.circle"
-              color={theme === "light" ? Colors.light.tint : Colors.dark.tint}
+            <Entypo
+              name="plus"
+              size={24}
+              color={Colors[theme ?? "light"].tint}
             />
           </TouchableOpacity>
         </ThemedView>
@@ -92,16 +101,31 @@ const ShoppingList = () => {
               onPress={() => handleItemChecked(item)}
               style={[
                 styles.listCard,
-                {
+                /* {
                   backgroundColor:
                     theme === "light"
                       ? Colors.light.elevatedBackground
                       : Colors.dark.elevatedBackground,
-                },
+                }, */
               ]}
             >
               <ThemedText style={styles.itemName}>{item.name}</ThemedText>
-              <ThemedText>{item.checked ? "DONE" : "X"}</ThemedText>
+              <View style={styles.iconContainer}>
+                <Entypo
+                  style={styles.icon}
+                  name="circle"
+                  size={24}
+                  color={Colors[theme ?? "light"].tint}
+                />
+                {item.checked && (
+                  <Entypo
+                    style={[styles.icon, styles.iconCheck]}
+                    name="check"
+                    size={18}
+                    color={Colors[theme ?? "light"].tint}
+                  />
+                )}
+              </View>
             </TouchableOpacity>
           )}
         />
@@ -121,6 +145,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 12,
+    borderBottomWidth: 1,
   },
   backButton: {
     display: "flex",
@@ -159,5 +184,17 @@ const styles = StyleSheet.create({
   },
   itemName: {
     flex: 1,
+  },
+  iconContainer: {
+    position: "relative",
+    width: 24,
+    height: 24,
+  },
+  icon: {
+    position: "absolute",
+  },
+  iconCheck: {
+    top: 4,
+    left: 3,
   },
 });

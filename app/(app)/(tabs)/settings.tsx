@@ -1,26 +1,21 @@
-import { StyleSheet, Image, Platform } from "react-native";
+import { StyleSheet, Image, Platform, useColorScheme } from "react-native";
 
-import { Collapsible } from "@/components/Collapsible";
-import { ExternalLink } from "@/components/ExternalLink";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useSession } from "@/context";
+import { Entypo } from "@expo/vector-icons";
+import { Colors } from "@/constants/Colors";
 
 export default function TabTwoScreen() {
   const { signOut } = useSession();
+  const theme = useColorScheme();
 
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#D0D0D0", dark: "#353636" }}
       headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
+        <Entypo name="cog" size={350} color={Colors[theme ?? "light"].tint} />
       }
     >
       <ThemedView style={styles.titleContainer}>

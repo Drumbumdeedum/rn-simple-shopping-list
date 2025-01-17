@@ -4,12 +4,12 @@ import {
   useColorScheme,
   FlatList,
   View,
+  GestureResponderEvent,
 } from "react-native";
 
 import { ThemedView } from "@/components/ThemedView";
 import useUserStore from "@/state/userStore";
 import ThemedInput from "@/components/ui/ThemedInput";
-import { IconSymbol } from "@/components/ui/IconSymbol";
 import { Colors } from "@/constants/Colors";
 import { SafeAreaView } from "react-native-safe-area-context";
 import useShoppingListStore from "@/state/shoppingListStore";
@@ -17,6 +17,8 @@ import { ThemedText } from "@/components/ThemedText";
 import { Link } from "expo-router";
 import { useState } from "react";
 import { createNewShoppingList } from "@/hooks/shoppingList";
+import { formatDate } from "@/utils/dateUtils";
+import { Entypo } from "@expo/vector-icons";
 
 export default function HomeScreen() {
   const { shoppingLists, addShoppingList } = useShoppingListStore();
@@ -31,6 +33,12 @@ export default function HomeScreen() {
     }
   };
 
+  const onEdit = (event: GestureResponderEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    console.log("EDIT");
+  };
+
   return (
     <SafeAreaView
       style={[
@@ -43,25 +51,28 @@ export default function HomeScreen() {
         },
       ]}
     >
-      <ThemedView style={styles.header}>
+      <ThemedView
+        style={[
+          styles.header,
+          {
+            borderColor:
+              theme === "light" ? Colors.light.icon : Colors.dark.icon,
+          },
+        ]}
+      >
         <ThemedInput
           placeholder="List name"
           value={listName}
           onChange={(e) => setListName(e.nativeEvent.text)}
         />
         <TouchableOpacity onPress={handleCreateNewShoppingList}>
-          <IconSymbol
-            size={32}
-            name="plus.circle"
-            color={theme === "light" ? Colors.light.tint : Colors.dark.tint}
-          />
+          <Entypo name="plus" size={24} color={Colors[theme ?? "light"].tint} />
         </TouchableOpacity>
       </ThemedView>
       <ThemedView style={styles.listContainer}>
         <FlatList
           style={styles.shoppingLists}
           data={shoppingLists}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
           renderItem={({ item }) => (
             <Link
               href={{
@@ -69,25 +80,32 @@ export default function HomeScreen() {
                 params: { id: item.id },
               }}
               style={[
-                styles.listCard,
-                {
+                styles.card,
+                /* {
                   backgroundColor:
                     theme === "light"
                       ? Colors.light.elevatedBackground
                       : Colors.dark.elevatedBackground,
-                },
+                }, */
               ]}
             >
-              <TouchableOpacity>
-                <ThemedText>{item.name}</ThemedText>
-                <View style={styles.progressBar}>
-                  <View
-                    style={[
-                      styles.progressFill,
-                      { width: `${Math.random() * 100}%` },
-                    ]}
-                  />
+              <TouchableOpacity style={styles.cardContent}>
+                <View style={styles.textContainer}>
+                  <ThemedText type="title">{item.name}</ThemedText>
+                  <ThemedText type="subtitle">
+                    {formatDate(item.created_at)}
+                  </ThemedText>
                 </View>
+                <TouchableOpacity
+                  onPress={(e) => onEdit(e)}
+                  style={styles.editButton}
+                >
+                  <Entypo
+                    name="dots-three-vertical"
+                    size={24}
+                    color={Colors[theme ?? "light"].tint}
+                  />
+                </TouchableOpacity>
               </TouchableOpacity>
             </Link>
           )}
@@ -105,47 +123,38 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 12,
+    borderBottomWidth: 1,
   },
   listContainer: {
     display: "flex",
     flex: 1,
   },
-
   shoppingLists: {
     padding: 12,
     display: "flex",
     flexDirection: "column",
   },
-  listCard: {
-    padding: 18,
-    borderRadius: 5,
-    boxShadow: "0px 5px 05px rgba(0, 0, 0, 0.15)",
+  card: {
+    backgroundColor: "white",
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 12,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
-    elevation: 10,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  cardContent: {
     display: "flex",
-    flexDirection: "column",
-    gap: 18,
-    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
   },
-  separator: {
-    height: 12,
-    opacity: 0,
-    backgroundColor: "transparent",
+  textContainer: {
+    gap: 6,
+    flex: 1,
   },
-  progressBar: {
-    width: "100%",
-    height: 20,
-    backgroundColor: "#e0e0e0",
-    borderRadius: 10,
-    overflow: "hidden",
-    marginBottom: 20,
-  },
-  progressFill: {
-    height: "100%",
-    backgroundColor: "#4caf50",
-    borderRadius: 10,
+  editButton: {
+    padding: 8,
   },
 });
