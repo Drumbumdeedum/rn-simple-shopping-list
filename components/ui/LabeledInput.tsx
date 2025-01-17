@@ -20,6 +20,7 @@ const LabeledInput = ({
   placeholder,
   secureTextEntry = false,
   value,
+  style,
 }: {
   setValue: (value: React.SetStateAction<string>) => void;
   scrollViewRef: React.RefObject<ScrollView>;
@@ -27,6 +28,7 @@ const LabeledInput = ({
   placeholder: string;
   secureTextEntry?: boolean;
   value?: string;
+  style?: object;
 }) => {
   const theme = useColorScheme() ?? "light";
   const inputRef = useRef<TextInput | null>(null);
@@ -90,6 +92,7 @@ const LabeledInput = ({
         onFocus={() => handleFocus()}
         onBlur={handleBlur}
         secureTextEntry={secureTextEntry}
+        style={[styles.input, style]}
       />
     </View>
   );
@@ -103,6 +106,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderStyle: "solid",
     borderRadius: 3,
+    display: "flex",
+    flex: 1,
   },
   label: {
     position: "absolute",

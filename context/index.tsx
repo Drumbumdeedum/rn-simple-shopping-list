@@ -28,7 +28,7 @@ export function useSession() {
 
 export function SessionProvider(props: React.PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState("session");
-
+  const { setUser } = useUserStore();
   return (
     <AuthContext.Provider
       value={{
@@ -49,6 +49,7 @@ export function SessionProvider(props: React.PropsWithChildren) {
         signOut: () => {
           supabase.auth.signOut();
           setSession(null);
+          setUser(null);
         },
         session,
         isLoading,

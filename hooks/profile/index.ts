@@ -9,3 +9,12 @@ export const fetchUserById = async (id: string): Promise<User> => {
     .single();
   return data;
 };
+
+export const fetchUserByEmail = async (email: string): Promise<User> => {
+  const { data } = await supabase
+    .from("profiles")
+    .select()
+    .eq("email", email)
+    .single();
+  return data;
+};
