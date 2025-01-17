@@ -14,6 +14,7 @@ import { useState } from "react";
 import ThemedInput from "@/components/ui/ThemedInput";
 import { fetchUserByEmail } from "@/hooks/profile";
 import useUserStore from "@/state/userStore";
+import { createNewFriendRequest, FriendRequestError } from "@/hooks/friends";
 
 export default function FriendsScreen() {
   const theme = useColorScheme();
@@ -22,10 +23,25 @@ export default function FriendsScreen() {
 
   const handleAddFriend = async () => {
     const result = await fetchUserByEmail(friendEmail);
-    console.log("REQUESTED: ", result);
-    console.log("LOGGED IN: ", user);
+    if (!user) return;
+    if (!result) {
+      console.log("USER NOT FOUND!");
+      return;
+    }
     if (user && result.email === user.email) {
-      console.log("THATS YOU, YOU DUMMY");
+      console.log("THATS YOU, YOU DUMMY!");
+      return;
+    }
+
+    try {
+      const friendRequest = await createNewFriendRequest(user.id, result.id);
+      console.log(friendRequest);
+    } catch (e) {
+      if (e instanceof FriendRequestError) {
+        console.log(e.message);
+      } else {
+        console.log(e);
+      }
     }
   };
 
