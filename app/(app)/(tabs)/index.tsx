@@ -12,24 +12,36 @@ import useUserStore from "@/state/userStore";
 import ThemedInput from "@/components/ui/ThemedInput";
 import { Colors } from "@/constants/Colors";
 import { SafeAreaView } from "react-native-safe-area-context";
-import useShoppingListStore from "@/state/shoppingListStore";
 import { ThemedText } from "@/components/ThemedText";
 import { Link } from "expo-router";
-import { useState } from "react";
-import { createNewShoppingList } from "@/hooks/shoppingList";
+import { useEffect, useState } from "react";
+import {
+  createNewShoppingList,
+  fetchShoppingListsByUserId,
+} from "@/hooks/shoppingList";
 import { formatDate } from "@/utils/dateUtils";
 import { Entypo } from "@expo/vector-icons";
+import { ShoppingList } from "@/types";
 
 export default function HomeScreen() {
-  const { shoppingLists, addShoppingList } = useShoppingListStore();
   const { user } = useUserStore();
+  if (!user) return;
   const theme = useColorScheme();
+  const [shoppingLists, setShoppingLists] = useState<ShoppingList[]>([]);
   const [listName, setListName] = useState<string>("");
+
+  useEffect(() => {
+    const fetchShoppingLists = async () => {
+      const resultLists = await fetchShoppingListsByUserId(user.id);
+      setShoppingLists(resultLists);
+    };
+    fetchShoppingLists();
+  }, []);
 
   const handleCreateNewShoppingList = async () => {
     if (user) {
       const result = await createNewShoppingList(user.id, listName);
-      addShoppingList(result);
+      setShoppingLists((prev) => [...prev, result]);
     }
   };
 

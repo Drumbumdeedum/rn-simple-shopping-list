@@ -17,15 +17,12 @@ import React from "react";
 import LoadingScreen from "@/components/LoadingScreen";
 import { fetchUserById } from "@/hooks/profile";
 import useUserStore from "@/state/userStore";
-import { fetchShoppingListsByUserId } from "@/hooks/shoppingList";
-import useShoppingListStore from "@/state/shoppingListStore";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const session = useSession();
   const { user, setUser } = useUserStore();
-  const { setShoppingLists } = useShoppingListStore();
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require("../../assets/fonts/SpaceMono-Regular.ttf"),
@@ -43,8 +40,6 @@ export default function RootLayout() {
       const fetchUser = async (id: string) => {
         const resultUser = await fetchUserById(id);
         setUser(resultUser);
-        const resultLists = await fetchShoppingListsByUserId(resultUser.id);
-        setShoppingLists(resultLists);
       };
       fetchUser(sessionObject.user.id);
     }
