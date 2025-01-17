@@ -23,3 +23,11 @@ export interface ShoppingListItem {
   name: string;
   checked: boolean;
 }
+
+export interface Friend {
+  id: string;
+  created_at: string;
+  user_id: string;
+  friend_id: string;
+  accepted: boolean;
+}
