@@ -1,14 +1,15 @@
-import { Friend, User } from "@/types";
+import { Friend, FriendStatus, User } from "@/types";
 import { supabase } from "@/utils/initSupabase";
 
-export const fetchAllFriendsByUserId = async (
+export const fetchAllFriendStatusesByUserId = async (
   userId: string
-): Promise<User[]> => {
+): Promise<FriendStatus[]> => {
   const { data, error } = await supabase
     .from("friends")
     .select(
       `
-        user_id, 
+        user_id,
+        accepted, 
         profiles!friends_friend_id_fkey (
             id, 
             updated_at, 
@@ -17,11 +18,15 @@ export const fetchAllFriendsByUserId = async (
     `
     )
     .eq("user_id", userId);
-  return data
-    ?.map((result) => result.profiles)
-    .reduce((total, current) => {
-      return total.concat(current);
-    }, []) as User[];
+  if (!data) throw new Error("No data");
+  return data.map((res) => {
+    let user = res.profiles as unknown as User;
+    return {
+      id: user.id,
+      email: user.email,
+      accepted: res.accepted,
+    };
+  });
 };
 
 export const createNewFriendRequest = async (

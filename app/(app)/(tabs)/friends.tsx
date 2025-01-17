@@ -3,6 +3,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   useColorScheme,
+  View,
 } from "react-native";
 
 import ParallaxScrollView from "@/components/ParallaxScrollView";
@@ -16,27 +17,26 @@ import { fetchUserByEmail } from "@/hooks/profile";
 import useUserStore from "@/state/userStore";
 import {
   createNewFriendRequest,
-  fetchAllFriendsByUserId,
+  fetchAllFriendStatusesByUserId,
   FriendRequestError,
 } from "@/hooks/friends";
-import { Friend, User } from "@/types";
+import { FriendStatus } from "@/types";
 
 export default function FriendsScreen() {
   const theme = useColorScheme();
   const { user } = useUserStore();
   const [friendEmail, setFriendEmail] = useState<string>("");
-  const [friends, setFriends] = useState<User[]>([]);
+  const [friends, setFriends] = useState<FriendStatus[]>([]);
 
   useEffect(() => {
     const fetchFriends = async () => {
       if (user) {
-        const result = await fetchAllFriendsByUserId(user.id);
-        console.log(result);
+        const result = await fetchAllFriendStatusesByUserId(user.id);
         setFriends(result);
       }
     };
     fetchFriends();
-  }, []);
+  }, [user]);
 
   const handleAddFriend = async () => {
     const result = await fetchUserByEmail(friendEmail);
@@ -51,8 +51,7 @@ export default function FriendsScreen() {
     }
 
     try {
-      const friendRequest = await createNewFriendRequest(user.id, result.id);
-      console.log(friendRequest);
+      await createNewFriendRequest(user.id, result.id);
     } catch (e) {
       if (e instanceof FriendRequestError) {
         console.log(e.message);
@@ -89,7 +88,20 @@ export default function FriendsScreen() {
 
       <FlatList
         data={friends}
-        renderItem={({ item }) => <ThemedText>{item.email}</ThemedText>}
+        renderItem={({ item }) => (
+          <View style={styles.friendData}>
+            <ThemedText style={styles.friendEmail}>{item.email}</ThemedText>
+            {item.accepted ? (
+              <Entypo
+                name="check"
+                size={24}
+                color={Colors[theme ?? "light"].tint}
+              />
+            ) : (
+              <ThemedText type="subtitle">Pending</ThemedText>
+            )}
+          </View>
+        )}
       />
     </ParallaxScrollView>
   );
@@ -115,6 +127,25 @@ const styles = StyleSheet.create({
   },
   input: {
     display: "flex",
+    flex: 1,
+  },
+  friendData: {
+    display: "flex",
+    flexDirection: "row",
+    backgroundColor: "white",
+    borderRadius: 8,
+    paddingTop: 8,
+    paddingBottom: 8,
+    paddingRight: 16,
+    paddingLeft: 16,
+    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  friendEmail: {
     flex: 1,
   },
 });

@@ -37,7 +37,7 @@ export default function HomeScreen() {
       }
     };
     fetchShoppingLists();
-  }, []);
+  }, [user]);
 
   const handleCreateNewShoppingList = async () => {
     if (user) {

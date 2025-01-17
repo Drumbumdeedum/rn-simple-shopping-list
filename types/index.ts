@@ -31,3 +31,9 @@ export interface Friend {
   friend_id: string;
   accepted: boolean;
 }
+
+export interface FriendStatus {
+  id: string;
+  email: string;
+  accepted: boolean;
+}
