@@ -1,9 +1,8 @@
-import { StyleSheet, Image, Platform, useColorScheme } from "react-native";
+import { StyleSheet, useColorScheme } from "react-native";
 
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { useSession } from "@/context";
 import { Entypo } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 
