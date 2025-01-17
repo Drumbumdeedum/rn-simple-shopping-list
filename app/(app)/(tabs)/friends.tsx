@@ -7,28 +7,19 @@ import { useSession } from "@/context";
 import { Entypo } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 
-export default function SettingsScreen() {
-  const { signOut } = useSession();
+export default function FriendsScreen() {
   const theme = useColorScheme();
 
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#D0D0D0", dark: "#353636" }}
       headerImage={
-        <Entypo name="cog" size={350} color={Colors[theme ?? "light"].tint} />
+        <Entypo name="users" size={250} color={Colors[theme ?? "light"].tint} />
       }
     >
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Settings</ThemedText>
+        <ThemedText type="title">Friends</ThemedText>
       </ThemedView>
-      <ThemedText
-        type="link"
-        onPress={() => {
-          signOut();
-        }}
-      >
-        Sign Out
-      </ThemedText>
     </ParallaxScrollView>
   );
 }

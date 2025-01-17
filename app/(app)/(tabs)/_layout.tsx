@@ -40,6 +40,19 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="friends"
+        options={{
+          title: "Friends",
+          tabBarIcon: () => (
+            <Entypo
+              name="users"
+              size={24}
+              color={Colors[theme ?? "light"].tint}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="settings"
         options={{
           title: "Settings",
