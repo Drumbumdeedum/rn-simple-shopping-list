@@ -50,10 +50,7 @@ const ShoppingList = () => {
         styles.listContainer,
         { flex: 1 },
         {
-          backgroundColor:
-            theme === "light"
-              ? Colors.light.background
-              : Colors.dark.background,
+          backgroundColor: Colors[theme ?? "light"].background,
         },
       ]}
     >

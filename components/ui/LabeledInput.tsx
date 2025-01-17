@@ -74,10 +74,7 @@ const LabeledInput = ({
           style={[
             styles.labelText,
             {
-              backgroundColor:
-                theme === "light"
-                  ? Colors.light.background
-                  : Colors.dark.background,
+              backgroundColor: Colors[theme ?? "light"].background,
             },
           ]}
         >

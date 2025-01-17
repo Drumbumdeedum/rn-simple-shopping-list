@@ -57,10 +57,7 @@ export default function HomeScreen() {
       style={[
         { flex: 1 },
         {
-          backgroundColor:
-            theme === "light"
-              ? Colors.light.backgroundSecondary
-              : Colors.dark.backgroundSecondary,
+          backgroundColor: Colors[theme ?? "light"].backgroundSecondary,
         },
       ]}
     >

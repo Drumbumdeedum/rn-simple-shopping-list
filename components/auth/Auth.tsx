@@ -82,10 +82,7 @@ export default function Auth() {
       style={[
         { flex: 1 },
         {
-          backgroundColor:
-            theme === "light"
-              ? Colors.light.background
-              : Colors.dark.background,
+          backgroundColor: Colors[theme ?? "light"].background,
         },
       ]}
     >
@@ -95,10 +92,7 @@ export default function Auth() {
           contentContainerStyle={styles.container}
           style={[
             {
-              backgroundColor:
-                theme === "light"
-                  ? Colors.light.background
-                  : Colors.dark.background,
+              backgroundColor: Colors[theme ?? "light"].background,
             },
           ]}
         >
