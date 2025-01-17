@@ -1,5 +1,5 @@
 import {
-  ScrollView,
+  FlatList,
   StyleSheet,
   TouchableOpacity,
   useColorScheme,
@@ -10,16 +10,33 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Entypo } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ThemedInput from "@/components/ui/ThemedInput";
 import { fetchUserByEmail } from "@/hooks/profile";
 import useUserStore from "@/state/userStore";
-import { createNewFriendRequest, FriendRequestError } from "@/hooks/friends";
+import {
+  createNewFriendRequest,
+  fetchAllFriendsByUserId,
+  FriendRequestError,
+} from "@/hooks/friends";
+import { Friend, User } from "@/types";
 
 export default function FriendsScreen() {
   const theme = useColorScheme();
   const { user } = useUserStore();
   const [friendEmail, setFriendEmail] = useState<string>("");
+  const [friends, setFriends] = useState<User[]>([]);
+
+  useEffect(() => {
+    const fetchFriends = async () => {
+      if (user) {
+        const result = await fetchAllFriendsByUserId(user.id);
+        console.log(result);
+        setFriends(result);
+      }
+    };
+    fetchFriends();
+  }, []);
 
   const handleAddFriend = async () => {
     const result = await fetchUserByEmail(friendEmail);
@@ -69,6 +86,11 @@ export default function FriendsScreen() {
           <Entypo name="plus" size={24} color={Colors[theme ?? "light"].tint} />
         </TouchableOpacity>
       </ThemedView>
+
+      <FlatList
+        data={friends}
+        renderItem={({ item }) => <ThemedText>{item.email}</ThemedText>}
+      />
     </ParallaxScrollView>
   );
 }

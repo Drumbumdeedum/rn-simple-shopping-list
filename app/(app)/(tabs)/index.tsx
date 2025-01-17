@@ -43,6 +43,7 @@ export default function HomeScreen() {
     if (user) {
       const result = await createNewShoppingList(user.id, listName);
       setShoppingLists((prev) => [...prev, result]);
+      setListName("");
     }
   };
 
