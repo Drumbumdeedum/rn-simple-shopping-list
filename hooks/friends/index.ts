@@ -4,7 +4,7 @@ import { supabase } from "@/utils/initSupabase";
 export const fetchAllFriendStatusesByUserId = async (
   userId: string
 ): Promise<FriendStatus[]> => {
-  const { data, error } = await supabase
+  const { data: outgoing, error: outgoingError } = await supabase
     .from("friends")
     .select(
       `
@@ -18,8 +18,24 @@ export const fetchAllFriendStatusesByUserId = async (
     `
     )
     .eq("user_id", userId);
-  if (!data) throw new Error("No data");
-  return data.map((res) => {
+  if (!outgoing) throw new Error("No data");
+  const { data: incoming, error: incomingError } = await supabase
+    .from("friends")
+    .select(
+      `
+        user_id,
+        accepted, 
+        profiles!friends_friend_id_fkey (
+            id, 
+            updated_at, 
+            email
+        )
+    `
+    )
+    .eq("friend_id", userId)
+    .neq("accepted", false);
+  if (!incoming) throw new Error("No data");
+  const outgoingResults = outgoing.map((res) => {
     let user = res.profiles as unknown as User;
     return {
       id: user.id,
@@ -27,6 +43,15 @@ export const fetchAllFriendStatusesByUserId = async (
       accepted: res.accepted,
     };
   });
+  const incomingResults = incoming.map((res) => {
+    let user = res.profiles as unknown as User;
+    return {
+      id: user.id,
+      email: user.email,
+      accepted: res.accepted,
+    };
+  });
+  return [...outgoingResults, ...incomingResults];
 };
 
 export const fetchFriendRequestsByUserId = async (
@@ -74,6 +99,20 @@ export const createNewFriendRequest = async (
     throw new FriendRequestError("Friend request already sent");
   if (error) throw new Error(error.message);
   return data;
+};
+
+export const acceptFriendRequest = async (
+  userId: string,
+  friendId: string
+): Promise<Friend> => {
+  const { data, error } = await supabase
+    .from("friends")
+    .update({ accepted: true })
+    .eq("user_id", userId)
+    .eq("friend_id", friendId)
+    .select("*")
+    .single();
+  return data as Friend;
 };
 
 export class FriendRequestError extends Error {

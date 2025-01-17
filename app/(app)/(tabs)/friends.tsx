@@ -15,7 +15,11 @@ import React, { useState } from "react";
 import ThemedInput from "@/components/ui/ThemedInput";
 import { fetchUserByEmail } from "@/hooks/profile";
 import useUserStore from "@/state/userStore";
-import { createNewFriendRequest, FriendRequestError } from "@/hooks/friends";
+import {
+  acceptFriendRequest,
+  createNewFriendRequest,
+  FriendRequestError,
+} from "@/hooks/friends";
 import { useFriends } from "@/hooks/friends/useFriends";
 import { useFriendRequests } from "@/hooks/friends/useFriendRequests";
 
@@ -23,8 +27,8 @@ export default function FriendsScreen() {
   const theme = useColorScheme();
   const { user } = useUserStore();
   const [friendEmail, setFriendEmail] = useState<string>("");
-  const { friends } = useFriends(user);
-  const { friendRequests } = useFriendRequests(user);
+  const { friends, setFriends } = useFriends(user);
+  const { friendRequests, setFriendRequests } = useFriendRequests(user);
 
   const handleAddFriend = async () => {
     const result = await fetchUserByEmail(friendEmail);
@@ -53,11 +57,22 @@ export default function FriendsScreen() {
     }
   };
 
-  const handleAccept = () => {
-    console.log("ACCEPT");
+  const handleAccept = async (userId: string) => {
+    if (user) {
+      const result = await acceptFriendRequest(userId, user.id);
+      const updated = friendRequests.find((fr) => fr.id === result.user_id);
+      if (updated) {
+        updated.accepted = true;
+        setFriends((prev) => [...prev, updated]);
+        setFriendRequests((prev) =>
+          prev.filter((fr) => fr.id !== result.user_id)
+        );
+      }
+    }
   };
-  const handleDecline = () => {
+  const handleDecline = (userId: string) => {
     console.log("DECLINE");
+    console.log(userId);
   };
 
   return (
@@ -104,7 +119,7 @@ export default function FriendsScreen() {
                   <View style={styles.requestButtonContainer}>
                     <TouchableOpacity
                       style={[styles.requestButton, styles.accept]}
-                      onPress={handleAccept}
+                      onPress={() => handleAccept(item.id)}
                     >
                       <ThemedText
                         type="defaultSemiBold"
@@ -115,7 +130,7 @@ export default function FriendsScreen() {
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={[styles.requestButton, styles.decline]}
-                      onPress={handleDecline}
+                      onPress={() => handleDecline(item.id)}
                     >
                       <ThemedText
                         type="defaultSemiBold"
