@@ -99,15 +99,7 @@ const ShoppingList = () => {
           renderItem={({ item }) => (
             <TouchableOpacity
               onPress={() => handleItemChecked(item)}
-              style={[
-                styles.listCard,
-                /* {
-                  backgroundColor:
-                    theme === "light"
-                      ? Colors.light.elevatedBackground
-                      : Colors.dark.elevatedBackground,
-                }, */
-              ]}
+              style={styles.listCard}
             >
               <ThemedText style={styles.itemName}>{item.name}</ThemedText>
               <View style={styles.iconContainer}>

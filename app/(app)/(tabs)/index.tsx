@@ -79,15 +79,7 @@ export default function HomeScreen() {
                 pathname: "/shoppingList/[id]",
                 params: { id: item.id },
               }}
-              style={[
-                styles.card,
-                /* {
-                  backgroundColor:
-                    theme === "light"
-                      ? Colors.light.elevatedBackground
-                      : Colors.dark.elevatedBackground,
-                }, */
-              ]}
+              style={styles.card}
             >
               <TouchableOpacity style={styles.cardContent}>
                 <View style={styles.textContainer}>
