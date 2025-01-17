@@ -13,7 +13,7 @@ import ThemedInput from "@/components/ui/ThemedInput";
 import { Colors } from "@/constants/Colors";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/ThemedText";
-import { Link } from "expo-router";
+import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   createNewShoppingList,
@@ -24,6 +24,7 @@ import { Entypo } from "@expo/vector-icons";
 import { ShoppingList } from "@/types";
 
 export default function HomeScreen() {
+  const router = useRouter();
   const { user } = useUserStore();
   const theme = useColorScheme();
   const [shoppingLists, setShoppingLists] = useState<ShoppingList[]>([]);
@@ -87,14 +88,11 @@ export default function HomeScreen() {
           style={styles.shoppingLists}
           data={shoppingLists}
           renderItem={({ item }) => (
-            <Link
-              href={{
-                pathname: "/shoppingList/[id]",
-                params: { id: item.id },
-              }}
+            <TouchableOpacity
+              onPress={() => router.push(`/shoppingList/${item.id}`)}
               style={styles.card}
             >
-              <TouchableOpacity style={styles.cardContent}>
+              <View style={styles.cardContent}>
                 <View style={styles.textContainer}>
                   <ThemedText type="title">{item.name}</ThemedText>
                   <ThemedText type="subtitle">
@@ -111,8 +109,8 @@ export default function HomeScreen() {
                     color={Colors[theme ?? "light"].tint}
                   />
                 </TouchableOpacity>
-              </TouchableOpacity>
-            </Link>
+              </View>
+            </TouchableOpacity>
           )}
         />
       </ThemedView>
