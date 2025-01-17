@@ -59,8 +59,8 @@ export default function HomeScreen() {
         {
           backgroundColor:
             theme === "light"
-              ? Colors.light.background
-              : Colors.dark.background,
+              ? Colors.light.backgroundSecondary
+              : Colors.dark.backgroundSecondary,
         },
       ]}
     >
@@ -68,8 +68,10 @@ export default function HomeScreen() {
         style={[
           styles.header,
           {
-            borderColor:
-              theme === "light" ? Colors.light.icon : Colors.dark.icon,
+            borderColor: Colors[theme ?? "light"].icon,
+          },
+          {
+            backgroundColor: Colors[theme ?? "light"].backgroundSecondary,
           },
         ]}
       >

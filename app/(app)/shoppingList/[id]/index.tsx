@@ -62,8 +62,7 @@ const ShoppingList = () => {
           style={[
             styles.header,
             {
-              borderColor:
-                theme === "light" ? Colors.light.icon : Colors.dark.icon,
+              borderColor: Colors[theme ?? "light"].icon,
             },
           ]}
         >

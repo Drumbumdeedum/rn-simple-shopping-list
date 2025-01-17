@@ -26,7 +26,7 @@ const LabeledInput = ({
   label: string;
   placeholder: string;
   secureTextEntry?: boolean;
-  value: string;
+  value?: string;
 }) => {
   const theme = useColorScheme() ?? "light";
   const inputRef = useRef<TextInput | null>(null);
