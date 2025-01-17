@@ -29,6 +29,35 @@ export const fetchAllFriendStatusesByUserId = async (
   });
 };
 
+export const fetchFriendRequestsByUserId = async (
+  userId: string
+): Promise<FriendStatus[]> => {
+  const { data, error } = await supabase
+    .from("friends")
+    .select(
+      `
+        user_id,
+        accepted, 
+        profiles!friends_user_id_fkey (
+            id, 
+            updated_at, 
+            email
+        )
+    `
+    )
+    .eq("friend_id", userId)
+    .eq("accepted", false);
+  if (!data) throw new Error("No data");
+  return data.map((res) => {
+    let user = res.profiles as unknown as User;
+    return {
+      id: user.id,
+      email: user.email,
+      accepted: res.accepted,
+    };
+  });
+};
+
 export const createNewFriendRequest = async (
   userId: string,
   friendId: string
