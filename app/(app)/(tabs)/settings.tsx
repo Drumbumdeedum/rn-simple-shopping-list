@@ -1,4 +1,10 @@
-import { StyleSheet, Image, Platform, useColorScheme } from "react-native";
+import {
+  StyleSheet,
+  Image,
+  Platform,
+  useColorScheme,
+  TouchableOpacity,
+} from "react-native";
 
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
@@ -21,14 +27,19 @@ export default function SettingsScreen() {
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Settings</ThemedText>
       </ThemedView>
-      <ThemedText
-        type="link"
+      <TouchableOpacity
+        style={styles.logOut}
         onPress={() => {
           signOut();
         }}
       >
-        Sign Out
-      </ThemedText>
+        <Entypo
+          name="log-out"
+          size={24}
+          color={Colors[theme ?? "light"].tint}
+        />
+        <ThemedText type="link">Sign Out</ThemedText>
+      </TouchableOpacity>
     </ParallaxScrollView>
   );
 }
@@ -43,5 +54,12 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: "row",
     gap: 8,
+  },
+  logOut: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    gap: 6,
   },
 });
