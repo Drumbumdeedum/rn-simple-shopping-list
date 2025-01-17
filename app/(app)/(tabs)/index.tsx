@@ -25,15 +25,16 @@ import { ShoppingList } from "@/types";
 
 export default function HomeScreen() {
   const { user } = useUserStore();
-  if (!user) return;
   const theme = useColorScheme();
   const [shoppingLists, setShoppingLists] = useState<ShoppingList[]>([]);
   const [listName, setListName] = useState<string>("");
 
   useEffect(() => {
     const fetchShoppingLists = async () => {
-      const resultLists = await fetchShoppingListsByUserId(user.id);
-      setShoppingLists(resultLists);
+      if (user) {
+        const resultLists = await fetchShoppingListsByUserId(user.id);
+        setShoppingLists(resultLists);
+      }
     };
     fetchShoppingLists();
   }, []);
@@ -48,7 +49,7 @@ export default function HomeScreen() {
   const onEdit = (event: GestureResponderEvent) => {
     event.preventDefault();
     event.stopPropagation();
-    console.log("EDIT");
+    console.log("TODO: IMPLEMENT LIST EDIT");
   };
 
   return (

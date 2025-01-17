@@ -70,6 +70,7 @@ export default function Auth() {
     if (!session)
       Alert.alert("Please check your inbox for email verification!");
     setLoading(false);
+    signInWithEmail();
   }
 
   const scrollViewRef = useRef<ScrollView | null>(null);
