@@ -3,12 +3,14 @@ import { supabase } from "@/utils/initSupabase";
 import { useEffect, useState } from "react";
 import { fetchShoppingListItemsByShoppingListId } from ".";
 
-const useShoppingListItems = (id: string) => {
+const useShoppingListItems = (shoppingListId: string) => {
   const [listItems, setListItems] = useState<ShoppingListItem[]>([]);
 
   useEffect(() => {
     const fetchItems = async () => {
-      const items = await fetchShoppingListItemsByShoppingListId(id as string);
+      const items = await fetchShoppingListItemsByShoppingListId(
+        shoppingListId as string
+      );
       setListItems(items);
     };
     fetchItems();
@@ -21,7 +23,11 @@ const useShoppingListItems = (id: string) => {
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "shopping_list_items" },
         (payload) => {
-          if (payload && payload.new && payload.new.shopping_list_id === id) {
+          if (
+            payload &&
+            payload.new &&
+            payload.new.shopping_list_id === shoppingListId
+          ) {
             setListItems((prev) => [...prev, payload.new as ShoppingListItem]);
           }
         }
@@ -39,7 +45,11 @@ const useShoppingListItems = (id: string) => {
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "shopping_list_items" },
         (payload) => {
-          if (payload && payload.new && payload.new.shopping_list_id === id) {
+          if (
+            payload &&
+            payload.new &&
+            payload.new.shopping_list_id === shoppingListId
+          ) {
             setListItems((prev) =>
               prev
                 .map((item) => {

@@ -11,32 +11,18 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Entypo } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ThemedInput from "@/components/ui/ThemedInput";
 import { fetchUserByEmail } from "@/hooks/profile";
 import useUserStore from "@/state/userStore";
-import {
-  createNewFriendRequest,
-  fetchAllFriendStatusesByUserId,
-  FriendRequestError,
-} from "@/hooks/friends";
-import { FriendStatus } from "@/types";
+import { createNewFriendRequest, FriendRequestError } from "@/hooks/friends";
+import { useFriends } from "@/hooks/friends/useFriends";
 
 export default function FriendsScreen() {
   const theme = useColorScheme();
   const { user } = useUserStore();
   const [friendEmail, setFriendEmail] = useState<string>("");
-  const [friends, setFriends] = useState<FriendStatus[]>([]);
-
-  useEffect(() => {
-    const fetchFriends = async () => {
-      if (user) {
-        const result = await fetchAllFriendStatusesByUserId(user.id);
-        setFriends(result);
-      }
-    };
-    fetchFriends();
-  }, [user]);
+  const { friends } = useFriends(user);
 
   const handleAddFriend = async () => {
     const result = await fetchUserByEmail(friendEmail);
