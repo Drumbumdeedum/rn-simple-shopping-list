@@ -22,7 +22,7 @@ export default function TabLayout() {
             style={{
               backgroundColor: Colors[theme ?? "light"].backgroundSecondary,
               borderTopWidth: 1,
-              borderColor: Colors[theme ?? "light"].icon,
+              borderColor: Colors[theme ?? "light"].border,
               flex: 1,
             }}
           />

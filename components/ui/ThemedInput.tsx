@@ -16,7 +16,7 @@ const ThemedInput = React.forwardRef<
         styles.input,
         { color: Colors[theme ?? "light"].text },
         {
-          borderColor: Colors[theme ?? "light"].icon,
+          borderColor: Colors[theme ?? "light"].border,
         },
         {
           backgroundColor: Colors[theme ?? "light"].background,

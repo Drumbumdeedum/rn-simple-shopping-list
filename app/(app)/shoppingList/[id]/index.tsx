@@ -59,7 +59,7 @@ const ShoppingList = () => {
           style={[
             styles.header,
             {
-              borderColor: Colors[theme ?? "light"].icon,
+              borderColor: Colors[theme ?? "light"].border,
             },
           ]}
         >
