@@ -1,12 +1,12 @@
 import {
   FlatList,
+  SafeAreaView,
   StyleSheet,
   TouchableOpacity,
   useColorScheme,
   View,
 } from "react-native";
 
-import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Entypo } from "@expo/vector-icons";
@@ -62,57 +62,62 @@ export default function FriendsScreen() {
   };
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{
-        light: Colors.light.backgroundSecondary,
-        dark: Colors.dark.backgroundSecondary,
-      }}
-      headerImage={
-        <Entypo name="users" size={250} color={Colors[theme ?? "light"].tint} />
-      }
+    <SafeAreaView
+      style={[
+        { flex: 1 },
+        {
+          backgroundColor: Colors[theme ?? "light"].backgroundSecondary,
+        },
+      ]}
     >
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Friends</ThemedText>
-      </ThemedView>
+      <ThemedView style={styles.container}>
+        <ThemedView style={styles.titleContainer}>
+          <ThemedText type="title">Friends</ThemedText>
+        </ThemedView>
 
-      <ThemedView style={styles.inputContainer}>
-        <ThemedInput
-          placeholder="Email address"
-          value={friendEmail}
-          onChange={(e) => setFriendEmail(e.nativeEvent.text)}
+        <ThemedView style={styles.inputContainer}>
+          <ThemedInput
+            placeholder="Email address"
+            value={friendEmail}
+            onChange={(e) => setFriendEmail(e.nativeEvent.text)}
+          />
+          <TouchableOpacity onPress={handleAddFriend}>
+            <Entypo
+              name="plus"
+              size={24}
+              color={Colors[theme ?? "light"].tint}
+            />
+          </TouchableOpacity>
+        </ThemedView>
+
+        <FlatList
+          data={friends}
+          renderItem={({ item }) => (
+            <View style={styles.friendData}>
+              <ThemedText style={styles.friendEmail}>{item.email}</ThemedText>
+              {item.accepted ? (
+                <Entypo
+                  name="check"
+                  size={24}
+                  color={Colors[theme ?? "light"].tint}
+                />
+              ) : (
+                <ThemedText type="subtitle">Pending</ThemedText>
+              )}
+            </View>
+          )}
         />
-        <TouchableOpacity onPress={handleAddFriend}>
-          <Entypo name="plus" size={24} color={Colors[theme ?? "light"].tint} />
-        </TouchableOpacity>
       </ThemedView>
-
-      <FlatList
-        data={friends}
-        renderItem={({ item }) => (
-          <View style={styles.friendData}>
-            <ThemedText style={styles.friendEmail}>{item.email}</ThemedText>
-            {item.accepted ? (
-              <Entypo
-                name="check"
-                size={24}
-                color={Colors[theme ?? "light"].tint}
-              />
-            ) : (
-              <ThemedText type="subtitle">Pending</ThemedText>
-            )}
-          </View>
-        )}
-      />
-    </ParallaxScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: "#808080",
-    bottom: -90,
-    left: -35,
-    position: "absolute",
+  container: {
+    flex: 1,
+    display: "flex",
+    padding: 32,
+    gap: 24,
   },
   titleContainer: {
     flexDirection: "row",
@@ -123,7 +128,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    flex: 1,
   },
   input: {
     display: "flex",
