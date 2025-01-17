@@ -30,12 +30,8 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Home",
-          tabBarIcon: () => (
-            <Entypo
-              name="home"
-              size={24}
-              color={Colors[theme ?? "light"].tint}
-            />
+          tabBarIcon: ({ color }) => (
+            <Entypo name="home" size={24} color={color} />
           ),
         }}
       />
@@ -43,12 +39,8 @@ export default function TabLayout() {
         name="friends"
         options={{
           title: "Friends",
-          tabBarIcon: () => (
-            <Entypo
-              name="users"
-              size={24}
-              color={Colors[theme ?? "light"].tint}
-            />
+          tabBarIcon: ({ color }) => (
+            <Entypo name="users" size={24} color={color} />
           ),
         }}
       />
@@ -56,12 +48,8 @@ export default function TabLayout() {
         name="settings"
         options={{
           title: "Settings",
-          tabBarIcon: () => (
-            <Entypo
-              name="cog"
-              size={24}
-              color={Colors[theme ?? "light"].tint}
-            />
+          tabBarIcon: ({ color }) => (
+            <Entypo name="cog" size={24} color={color} />
           ),
         }}
       />
