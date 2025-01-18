@@ -83,6 +83,7 @@ export default function FriendsScreen() {
               <ThemedText type="title">Friend requests</ThemedText>
             </ThemedView>
             <FlatList
+              style={styles.flatList}
               data={friendRequests}
               renderItem={({ item }) => (
                 <View style={styles.friendRequestData}>
@@ -124,6 +125,7 @@ export default function FriendsScreen() {
               <ThemedText type="title">Friends</ThemedText>
             </ThemedView>
             <FlatList
+              style={styles.flatList}
               data={friends}
               renderItem={({ item }) => (
                 <View style={styles.friendData}>
@@ -153,17 +155,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     display: "flex",
-    padding: 32,
     gap: 12,
+  },
+  flatList: {
+    padding: 12,
   },
   titleContainer: {
     flexDirection: "row",
+    padding: 12,
     gap: 8,
   },
   inputContainer: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
+    padding: 12,
     gap: 16,
   },
   input: {
@@ -175,7 +181,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     gap: 18,
     borderRadius: 8,
-    padding: 16,
+    padding: 12,
     boxShadow: "0px 5px 05px rgba(0, 0, 0, 0.15)",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 5 },
