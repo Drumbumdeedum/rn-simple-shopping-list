@@ -19,23 +19,7 @@ export const fetchAllFriendStatusesByUserId = async (
     )
     .eq("user_id", userId);
   if (!outgoing) throw new Error("No data");
-  const { data: incoming, error: incomingError } = await supabase
-    .from("friends")
-    .select(
-      `
-        user_id,
-        accepted, 
-        profiles!friends_user_id_fkey (
-            id, 
-            updated_at, 
-            email
-        )
-    `
-    )
-    .eq("friend_id", userId)
-    .neq("accepted", false);
-  if (!incoming) throw new Error("No data");
-  const outgoingResults = outgoing.map((res) => {
+  return outgoing.map((res) => {
     let user = res.profiles as unknown as User;
     return {
       id: user.id,
@@ -43,15 +27,6 @@ export const fetchAllFriendStatusesByUserId = async (
       accepted: res.accepted,
     };
   });
-  const incomingResults = incoming.map((res) => {
-    let user = res.profiles as unknown as User;
-    return {
-      id: user.id,
-      email: user.email,
-      accepted: res.accepted,
-    };
-  });
-  return [...outgoingResults, ...incomingResults];
 };
 
 export const fetchFriendRequestsByUserId = async (
