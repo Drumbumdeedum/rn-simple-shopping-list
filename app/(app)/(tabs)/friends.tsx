@@ -27,35 +27,8 @@ export default function FriendsScreen() {
   const theme = useColorScheme();
   const { user } = useUserStore();
   const [friendEmail, setFriendEmail] = useState<string>("");
-  const { friends, setFriends } = useFriends(user);
+  const { friends, setFriends, handleAddFriend } = useFriends(user);
   const { friendRequests, setFriendRequests } = useFriendRequests(user);
-
-  const handleAddFriend = async () => {
-    const result = await fetchUserByEmail(friendEmail);
-    if (!user) return;
-    if (!result) {
-      console.log("USER NOT FOUND!");
-      return;
-    }
-    if (user && result.email === user.email) {
-      console.log("THATS YOU, YOU DUMMY!");
-      return;
-    }
-    if (friendRequests.find((request) => request.email === friendEmail)) {
-      console.log("ALREADY EXISTS AS AN INCOMING REQUEST");
-      return;
-    }
-
-    try {
-      await createNewFriendRequest(user.id, result.id);
-    } catch (e) {
-      if (e instanceof FriendRequestError) {
-        console.log(e.message);
-      } else {
-        console.log(e);
-      }
-    }
-  };
 
   const handleAccept = async (userId: string) => {
     if (user) {
@@ -95,7 +68,7 @@ export default function FriendsScreen() {
             value={friendEmail}
             onChange={(e) => setFriendEmail(e.nativeEvent.text)}
           />
-          <TouchableOpacity onPress={handleAddFriend}>
+          <TouchableOpacity onPress={() => handleAddFriend(friendEmail)}>
             <Entypo
               name="plus"
               size={24}
