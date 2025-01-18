@@ -13,13 +13,8 @@ import { Entypo } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import React, { useState } from "react";
 import ThemedInput from "@/components/ui/ThemedInput";
-import { fetchUserByEmail } from "@/hooks/profile";
 import useUserStore from "@/state/userStore";
-import {
-  acceptFriendRequest,
-  createNewFriendRequest,
-  FriendRequestError,
-} from "@/hooks/friends";
+import { acceptFriendRequest } from "@/hooks/friends";
 import { useFriends } from "@/hooks/friends/useFriends";
 import { useFriendRequests } from "@/hooks/friends/useFriendRequests";
 
@@ -29,6 +24,11 @@ export default function FriendsScreen() {
   const [friendEmail, setFriendEmail] = useState<string>("");
   const { friends, setFriends, handleAddFriend } = useFriends(user);
   const { friendRequests, setFriendRequests } = useFriendRequests(user);
+
+  const addFriend = () => {
+    handleAddFriend(friendEmail);
+    setFriendEmail("");
+  };
 
   const handleAccept = async (userId: string) => {
     if (user) {
@@ -68,7 +68,7 @@ export default function FriendsScreen() {
             value={friendEmail}
             onChange={(e) => setFriendEmail(e.nativeEvent.text)}
           />
-          <TouchableOpacity onPress={() => handleAddFriend(friendEmail)}>
+          <TouchableOpacity onPress={addFriend}>
             <Entypo
               name="plus"
               size={24}
