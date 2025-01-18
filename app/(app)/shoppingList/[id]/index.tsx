@@ -21,6 +21,7 @@ import ThemedInput from "@/components/ui/ThemedInput";
 import { TextInput } from "react-native-gesture-handler";
 import useShoppingListItems from "@/hooks/shoppingListItem/useShoppingListItems";
 import { Entypo } from "@expo/vector-icons";
+import CardView from "@/components/ui/CardView";
 
 const ShoppingList = () => {
   const { id } = useLocalSearchParams();
@@ -91,12 +92,8 @@ const ShoppingList = () => {
         <FlatList
           data={listItems}
           style={styles.shoppingLists}
-          ItemSeparatorComponent={() => <ThemedView style={styles.separator} />}
           renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() => handleItemChecked(item)}
-              style={styles.listCard}
-            >
+            <CardView onPress={() => handleItemChecked(item)}>
               <ThemedText style={styles.itemName}>{item.name}</ThemedText>
               <View style={styles.iconContainer}>
                 <Entypo
@@ -114,7 +111,7 @@ const ShoppingList = () => {
                   />
                 )}
               </View>
-            </TouchableOpacity>
+            </CardView>
           )}
         />
         <StatusBar style="auto" />
@@ -150,25 +147,6 @@ const styles = StyleSheet.create({
     padding: 12,
     display: "flex",
     flexDirection: "column",
-  },
-  listCard: {
-    padding: 18,
-    borderRadius: 5,
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 18,
-    boxShadow: "0px 5px 05px rgba(0, 0, 0, 0.15)",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
-    elevation: 10,
-  },
-  separator: {
-    height: 12,
-    opacity: 0,
-    backgroundColor: "transparent",
   },
   itemName: {
     flex: 1,
