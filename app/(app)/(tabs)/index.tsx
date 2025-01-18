@@ -5,6 +5,7 @@ import {
   FlatList,
   View,
   GestureResponderEvent,
+  Modal,
 } from "react-native";
 
 import { ThemedView } from "@/components/ThemedView";
@@ -14,7 +15,7 @@ import { Colors } from "@/constants/Colors";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/ThemedText";
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   createNewShoppingList,
   fetchShoppingListsByUserId,
@@ -29,6 +30,7 @@ export default function HomeScreen() {
   const theme = useColorScheme();
   const [shoppingLists, setShoppingLists] = useState<ShoppingList[]>([]);
   const [listName, setListName] = useState<string>("");
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     const fetchShoppingLists = async () => {
@@ -51,8 +53,9 @@ export default function HomeScreen() {
   const onEdit = (event: GestureResponderEvent) => {
     event.preventDefault();
     event.stopPropagation();
-    console.log("TODO: IMPLEMENT LIST EDIT");
+    setModalVisible(true);
   };
+  const handleModalClose = () => setModalVisible(false);
 
   return (
     <SafeAreaView
@@ -63,6 +66,26 @@ export default function HomeScreen() {
         },
       ]}
     >
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={handleModalClose}
+      >
+        <View style={styles.overlay}>
+          <View style={[styles.modalContainer]}>
+            <ThemedText style={styles.modalText}>
+              Hello, I'm a Modal!
+            </ThemedText>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={handleModalClose}
+            >
+              <ThemedText style={styles.buttonText}>Close</ThemedText>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
       <ThemedView
         style={[
           styles.header,
@@ -159,5 +182,46 @@ const styles = StyleSheet.create({
   },
   editButton: {
     padding: 8,
+  },
+  // -- MODAL STYLES --
+  openButton: {
+    backgroundColor: "#2196F3",
+    padding: 12,
+    borderRadius: 8,
+  },
+  closeButton: {
+    backgroundColor: "#FF5A5F",
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 20,
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  overlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.09)",
+  },
+  modalContainer: {
+    width: "80%",
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 20,
+    alignItems: "center",
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  modalText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 20,
   },
 });
