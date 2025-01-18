@@ -17,6 +17,7 @@ import useUserStore from "@/state/userStore";
 import { acceptFriendRequest } from "@/hooks/friends";
 import { useFriends } from "@/hooks/friends/useFriends";
 import { useFriendRequests } from "@/hooks/friends/useFriendRequests";
+import CardView from "@/components/ui/CardView";
 
 export default function FriendsScreen() {
   const theme = useColorScheme();
@@ -86,7 +87,7 @@ export default function FriendsScreen() {
               style={styles.flatList}
               data={friendRequests}
               renderItem={({ item }) => (
-                <View style={styles.friendRequestData}>
+                <CardView style={styles.friendRequestData}>
                   <ThemedText style={styles.friendEmail}>
                     {item.email}
                   </ThemedText>
@@ -114,7 +115,7 @@ export default function FriendsScreen() {
                       </ThemedText>
                     </TouchableOpacity>
                   </View>
-                </View>
+                </CardView>
               )}
             />
           </>
@@ -128,7 +129,7 @@ export default function FriendsScreen() {
               style={styles.flatList}
               data={friends}
               renderItem={({ item }) => (
-                <View style={styles.friendData}>
+                <CardView>
                   <ThemedText style={styles.friendEmail}>
                     {item.email}
                   </ThemedText>
@@ -141,7 +142,7 @@ export default function FriendsScreen() {
                   ) : (
                     <ThemedText type="subtitle">Pending</ThemedText>
                   )}
-                </View>
+                </CardView>
               )}
             />
           </>
@@ -163,7 +164,6 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: "row",
     padding: 12,
-    gap: 8,
   },
   inputContainer: {
     display: "flex",
@@ -177,22 +177,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   friendRequestData: {
-    display: "flex",
+    flex: 1,
     flexDirection: "column",
-    gap: 18,
-    borderRadius: 8,
-    padding: 12,
-    boxShadow: "0px 5px 05px rgba(0, 0, 0, 0.15)",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
-    elevation: 10,
+    gap: 12,
   },
   requestButtonContainer: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
+    gap: 18,
   },
   requestButton: {
     paddingTop: 8,
@@ -215,22 +208,6 @@ const styles = StyleSheet.create({
   },
   decline: {
     backgroundColor: "red",
-  },
-  friendData: {
-    display: "flex",
-    flexDirection: "row",
-    borderRadius: 8,
-    paddingTop: 8,
-    paddingBottom: 8,
-    paddingRight: 16,
-    paddingLeft: 16,
-    marginBottom: 12,
-    boxShadow: "0px 5px 05px rgba(0, 0, 0, 0.15)",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
-    elevation: 10,
   },
   friendEmail: {
     flex: 1,
