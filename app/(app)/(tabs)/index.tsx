@@ -23,6 +23,7 @@ import {
 import { formatDate } from "@/utils/dateUtils";
 import { Entypo } from "@expo/vector-icons";
 import { ShoppingList } from "@/types";
+import CardView from "@/components/ui/CardView";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -111,29 +112,24 @@ export default function HomeScreen() {
           style={styles.shoppingLists}
           data={shoppingLists}
           renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() => router.push(`/shoppingList/${item.id}`)}
-              style={styles.card}
-            >
-              <View style={styles.cardContent}>
-                <View style={styles.textContainer}>
-                  <ThemedText type="title">{item.name}</ThemedText>
-                  <ThemedText type="subtitle">
-                    {formatDate(item.created_at)}
-                  </ThemedText>
-                </View>
-                <TouchableOpacity
-                  onPress={(e) => onEdit(e)}
-                  style={styles.editButton}
-                >
-                  <Entypo
-                    name="dots-three-vertical"
-                    size={24}
-                    color={Colors[theme ?? "light"].tint}
-                  />
-                </TouchableOpacity>
+            <CardView onPress={() => router.push(`/shoppingList/${item.id}`)}>
+              <View style={styles.textContainer}>
+                <ThemedText type="title">{item.name}</ThemedText>
+                <ThemedText type="subtitle">
+                  {formatDate(item.created_at)}
+                </ThemedText>
               </View>
-            </TouchableOpacity>
+              <TouchableOpacity
+                onPress={(e) => onEdit(e)}
+                style={styles.editButton}
+              >
+                <Entypo
+                  name="dots-three-vertical"
+                  size={24}
+                  color={Colors[theme ?? "light"].tint}
+                />
+              </TouchableOpacity>
+            </CardView>
           )}
         />
       </ThemedView>
@@ -159,22 +155,6 @@ const styles = StyleSheet.create({
     padding: 12,
     display: "flex",
     flexDirection: "column",
-  },
-  card: {
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 12,
-    boxShadow: "0px 5px 05px rgba(0, 0, 0, 0.15)",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
-    elevation: 10,
-  },
-  cardContent: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
   },
   textContainer: {
     gap: 6,
