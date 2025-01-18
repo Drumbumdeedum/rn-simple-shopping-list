@@ -25,7 +25,7 @@ export const fetchAllFriendStatusesByUserId = async (
       `
         user_id,
         accepted, 
-        profiles!friends_friend_id_fkey (
+        profiles!friends_user_id_fkey (
             id, 
             updated_at, 
             email
