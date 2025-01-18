@@ -70,7 +70,7 @@ export default function FriendsScreen() {
           />
           <TouchableOpacity onPress={addFriend}>
             <Entypo
-              name="plus"
+              name="add-user"
               size={24}
               color={Colors[theme ?? "light"].tint}
             />
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: 16,
   },
   input: {
     display: "flex",

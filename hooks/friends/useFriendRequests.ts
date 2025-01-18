@@ -28,9 +28,9 @@ export const useFriendRequests = (user: User | null) => {
             payload &&
             payload.new &&
             user &&
-            payload.new.friend_id === user.id
+            payload.new.friend_id === user.id &&
+            payload.new.accepted === false
           ) {
-            console.log(payload);
             const foundUser = await fetchUserById(payload.new.user_id);
             if (foundUser) {
               const friendStatus: FriendStatus = {

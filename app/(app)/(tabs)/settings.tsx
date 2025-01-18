@@ -12,9 +12,11 @@ import { ThemedView } from "@/components/ThemedView";
 import { useSession } from "@/context";
 import { Entypo } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
+import useUserStore from "@/state/userStore";
 
 export default function SettingsScreen() {
   const { signOut } = useSession();
+  const { user } = useUserStore();
   const theme = useColorScheme();
 
   return (
@@ -29,6 +31,9 @@ export default function SettingsScreen() {
     >
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Settings</ThemedText>
+      </ThemedView>
+      <ThemedView style={styles.titleContainer}>
+        <ThemedText type="subtitle">{user?.email}</ThemedText>
       </ThemedView>
       <TouchableOpacity
         style={styles.logOut}
