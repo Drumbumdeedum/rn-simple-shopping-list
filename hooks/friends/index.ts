@@ -4,7 +4,7 @@ import { supabase } from "@/utils/initSupabase";
 export const fetchAllFriendStatusesByUserId = async (
   userId: string
 ): Promise<FriendStatus[]> => {
-  const { data: outgoing, error: outgoingError } = await supabase
+  const { data, error } = await supabase
     .from("friends")
     .select(
       `
@@ -18,8 +18,8 @@ export const fetchAllFriendStatusesByUserId = async (
     `
     )
     .eq("user_id", userId);
-  if (!outgoing) throw new Error("No data");
-  return outgoing.map((res) => {
+  if (!data) throw new Error("No data");
+  return data.map((res) => {
     let user = res.profiles as unknown as User;
     return {
       id: user.id,

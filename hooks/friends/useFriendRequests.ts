@@ -24,7 +24,6 @@ export const useFriendRequests = (user: User | null) => {
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "friends" },
         async (payload) => {
-          console.log(payload);
           if (
             payload &&
             payload.new &&
