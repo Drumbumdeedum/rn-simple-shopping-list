@@ -93,7 +93,10 @@ export default function FriendsScreen() {
                   </ThemedText>
                   <View style={styles.requestButtonContainer}>
                     <TouchableOpacity
-                      style={[styles.requestButton, styles.accept]}
+                      style={[
+                        styles.requestButton,
+                        { backgroundColor: Colors[theme ?? "light"].success },
+                      ]}
                       onPress={() => handleAccept(item.id)}
                     >
                       <ThemedText
@@ -104,7 +107,10 @@ export default function FriendsScreen() {
                       </ThemedText>
                     </TouchableOpacity>
                     <TouchableOpacity
-                      style={[styles.requestButton, styles.decline]}
+                      style={[
+                        styles.requestButton,
+                        { backgroundColor: Colors[theme ?? "light"].error },
+                      ]}
                       onPress={() => handleDecline(item.id)}
                     >
                       <ThemedText
@@ -202,12 +208,6 @@ const styles = StyleSheet.create({
   },
   requestText: {
     color: "#fff",
-  },
-  accept: {
-    backgroundColor: "green",
-  },
-  decline: {
-    backgroundColor: "red",
   },
   friendEmail: {
     flex: 1,

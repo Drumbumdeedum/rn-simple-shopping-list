@@ -2,9 +2,11 @@ import {
   StyleSheet,
   TouchableOpacity,
   TouchableOpacityProps,
+  useColorScheme,
   ViewProps,
 } from "react-native";
 import React from "react";
+import { Colors } from "@/constants/Colors";
 
 export type CardViewProps = ViewProps &
   TouchableOpacityProps & {
@@ -12,8 +14,17 @@ export type CardViewProps = ViewProps &
   };
 
 const CardView = ({ children, style, onPress, ...props }: CardViewProps) => {
+  const theme = useColorScheme();
   return (
-    <TouchableOpacity onPress={onPress} style={[styles.card, style]} {...props}>
+    <TouchableOpacity
+      onPress={onPress}
+      style={[
+        styles.card,
+        { backgroundColor: Colors[theme ?? "light"].card },
+        style,
+      ]}
+      {...props}
+    >
       {children}
     </TouchableOpacity>
   );
