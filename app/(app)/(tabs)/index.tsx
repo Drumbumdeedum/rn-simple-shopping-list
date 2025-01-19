@@ -64,7 +64,9 @@ export default function HomeScreen() {
   };
   const handleModalClose = () => {
     setModalVisible(false);
-    setSelectedList(null);
+    setTimeout(() => {
+      setSelectedList(null);
+    }, 300);
   };
 
   return (
@@ -95,6 +97,7 @@ export default function HomeScreen() {
         <ThemedInput
           placeholder="List name"
           value={listName}
+          onSubmitEditing={handleCreateNewShoppingList}
           onChange={(e) => setListName(e.nativeEvent.text)}
         />
         <TouchableOpacity onPress={handleCreateNewShoppingList}>

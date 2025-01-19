@@ -7,7 +7,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import React, { ReactNode } from "react";
+import React, { useEffect, useState } from "react";
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { ThemedView } from "@/components/ThemedView";
@@ -15,7 +15,7 @@ import { FriendStatus, ShoppingList } from "@/types";
 import useUserStore from "@/state/userStore";
 import CardView from "../CardView";
 import { Entypo } from "@expo/vector-icons";
-import { shareShoppingList } from "@/hooks/shoppingList";
+import { getAccessByListId, shareShoppingList } from "@/hooks/shoppingList";
 
 type ShoppingListSettingsModal = {
   shoppingList: ShoppingList | null;
@@ -30,12 +30,25 @@ const ShoppingListSettingsModal = ({
 }: ShoppingListSettingsModal) => {
   const theme = useColorScheme();
   const { user, friends } = useUserStore();
+  const [usersWithAccess, setUsersWithAccess] = useState<string[]>([]);
 
   const onShareList = (friend: FriendStatus) => {
     if (shoppingList) {
       shareShoppingList(shoppingList?.id, friend.id);
+      setUsersWithAccess((prev) => [...prev, friend.id]);
     }
   };
+
+  useEffect(() => {
+    setUsersWithAccess([]);
+    const getAccessList = async () => {
+      if (shoppingList) {
+        const result = await getAccessByListId(shoppingList?.id);
+        setUsersWithAccess(result.map((res) => res.user_id));
+      }
+    };
+    getAccessList();
+  }, [shoppingList]);
 
   return (
     <Modal
@@ -69,7 +82,7 @@ const ShoppingListSettingsModal = ({
 
             <ThemedView style={styles.modalContent}>
               {shoppingList && user && shoppingList.user_id === user?.id ? (
-                <ThemedText>
+                <ThemedView>
                   <ThemedText style={styles.shareTitle} type="subtitle">
                     Share with friends:
                   </ThemedText>
@@ -89,20 +102,20 @@ const ShoppingListSettingsModal = ({
                               size={24}
                               color={Colors[theme ?? "light"].tint}
                             />
-                            {/* {item.checked && (
-                    <Entypo
-                      style={[styles.icon, styles.iconCheck]}
-                      name="check"
-                      size={18}
-                      color={Colors[theme ?? "light"].tint}
-                    />
-                  )} */}
+                            {usersWithAccess.includes(item.id) && (
+                              <Entypo
+                                style={[styles.icon, styles.iconCheck]}
+                                name="check"
+                                size={16}
+                                color={Colors[theme ?? "light"].tint}
+                              />
+                            )}
                           </View>
                         </CardView>
                       )}
                     />
                   )}
-                </ThemedText>
+                </ThemedView>
               ) : (
                 <ThemedText>A friend is sharing this list with you</ThemedText>
               )}
@@ -163,6 +176,7 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   iconCheck: {
+    position: "absolute",
     top: 4,
     left: 3,
   },

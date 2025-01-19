@@ -1,4 +1,8 @@
-import { ShoppingList, ShoppingListAccessWithListsResponse } from "@/types";
+import {
+  ShoppingList,
+  ShoppingListAccess,
+  ShoppingListAccessWithListsResponse,
+} from "@/types";
 import { supabase } from "@/utils/initSupabase";
 
 export const fetchShoppingListsByUserId = async (
@@ -20,6 +24,16 @@ export const fetchShoppingListsByUserId = async (
     .reduce((total, current) => {
       return total.concat(current);
     }, []);
+};
+
+export const getAccessByListId = async (
+  shoppingListId: string
+): Promise<ShoppingListAccess[]> => {
+  const { data, error } = await supabase
+    .from("shopping_lists_access")
+    .select("*")
+    .eq("shopping_list_id", shoppingListId);
+  return data as ShoppingListAccess[];
 };
 
 export const createNewShoppingList = async (

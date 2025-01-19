@@ -17,6 +17,13 @@ export interface ShoppingList {
   name: string;
 }
 
+export interface ShoppingListAccess {
+  id: string;
+  created_at: string;
+  user_id: string;
+  shopping_list_id: string;
+}
+
 export interface ShoppingListItem {
   id: string;
   created_at: string;
