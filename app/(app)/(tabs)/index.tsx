@@ -18,6 +18,7 @@ import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   createNewShoppingList,
+  deleteShoppingListAccess,
   fetchShoppingListsByUserId,
 } from "@/hooks/shoppingList";
 import { formatDate } from "@/utils/dateUtils";
@@ -26,6 +27,7 @@ import { ShoppingList } from "@/types";
 import CardView from "@/components/ui/CardView";
 import ShoppingListSettingsModal from "@/components/ui/modals/ShoppingListSettingsModal";
 import { supabase } from "@/utils/initSupabase";
+import ConfirmDeleteListModal from "@/components/ui/modals/ConfirmDeleteListModal";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -34,7 +36,8 @@ export default function HomeScreen() {
   const [shoppingLists, setShoppingLists] = useState<ShoppingList[]>([]);
   const [selectedList, setSelectedList] = useState<ShoppingList | null>(null);
   const [listName, setListName] = useState<string>("");
-  const [modalVisible, setModalVisible] = useState(false);
+  const [settingsModalVisible, setSettingsModalVisible] = useState(false);
+  const [deleteListModalVisible, setDeleteListModalVisible] = useState(false);
 
   useEffect(() => {
     const fetchShoppingLists = async () => {
@@ -89,10 +92,34 @@ export default function HomeScreen() {
     event.preventDefault();
     event.stopPropagation();
     setSelectedList(shoppingList);
-    setModalVisible(true);
+    setSettingsModalVisible(true);
   };
+
   const handleModalClose = () => {
-    setModalVisible(false);
+    setSettingsModalVisible(false);
+    setTimeout(() => {
+      setSelectedList(null);
+    }, 300);
+  };
+
+  const handleDeleteList = () => {
+    setSettingsModalVisible(false);
+    setDeleteListModalVisible(true);
+  };
+
+  const confirmDeleteList = async () => {
+    if (user && selectedList) {
+      await deleteShoppingListAccess(user.id, selectedList.id);
+      setShoppingLists((prev) =>
+        prev.filter((list) => list.id !== selectedList.id)
+      );
+      setSelectedList(null);
+      setDeleteListModalVisible(false);
+    }
+  };
+
+  const handleDeleteListModalClose = () => {
+    setDeleteListModalVisible(false);
     setTimeout(() => {
       setSelectedList(null);
     }, 300);
@@ -109,8 +136,15 @@ export default function HomeScreen() {
     >
       <ShoppingListSettingsModal
         shoppingList={selectedList}
-        modalVisible={modalVisible}
+        modalVisible={settingsModalVisible}
         onClose={handleModalClose}
+        onDeleteList={handleDeleteList}
+      />
+      <ConfirmDeleteListModal
+        shoppingList={selectedList}
+        modalVisible={deleteListModalVisible}
+        onClose={handleDeleteListModalClose}
+        onDeleteList={confirmDeleteList}
       />
       <ThemedView
         style={[

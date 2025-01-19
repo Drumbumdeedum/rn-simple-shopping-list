@@ -63,3 +63,18 @@ export const shareShoppingList = async (
     })
     .select("*");
 };
+
+export const deleteShoppingListAccess = async (
+  userId: string,
+  shoppingListId: string
+) => {
+  const { data, error } = await supabase
+    .from("shopping_lists_access")
+    .delete()
+    .eq("user_id", userId)
+    .eq("shopping_list_id", shoppingListId)
+    .select("*");
+
+  console.log(data);
+  console.log(error);
+};

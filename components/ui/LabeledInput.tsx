@@ -92,7 +92,17 @@ const LabeledInput = ({
         onFocus={() => handleFocus()}
         onBlur={handleBlur}
         secureTextEntry={secureTextEntry}
-        style={[styles.input, style]}
+        style={[
+          styles.input,
+          style,
+          { color: Colors[theme ?? "light"].text },
+          {
+            borderColor: Colors[theme ?? "light"].border,
+          },
+          {
+            backgroundColor: Colors[theme ?? "light"].background,
+          },
+        ]}
       />
     </View>
   );

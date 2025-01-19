@@ -21,12 +21,14 @@ type ShoppingListSettingsModal = {
   shoppingList: ShoppingList | null;
   modalVisible: boolean;
   onClose: () => void;
+  onDeleteList: () => void;
 };
 
 const ShoppingListSettingsModal = ({
   shoppingList,
   modalVisible,
   onClose,
+  onDeleteList,
 }: ShoppingListSettingsModal) => {
   const theme = useColorScheme();
   const { user, friends } = useUserStore();
@@ -119,6 +121,21 @@ const ShoppingListSettingsModal = ({
               ) : (
                 <ThemedText>A friend is sharing this list with you</ThemedText>
               )}
+
+              <ThemedView>
+                <TouchableOpacity
+                  onPress={onDeleteList}
+                  style={[
+                    styles.deleteButton,
+                    { backgroundColor: Colors[theme ?? "light"].error },
+                  ]}
+                >
+                  <ThemedText type="defaultSemiBold" style={styles.deleteText}>
+                    Delete list
+                  </ThemedText>
+                  <Entypo name="trash" size={16} color={"#fff"} />
+                </TouchableOpacity>
+              </ThemedView>
             </ThemedView>
           </View>
         </View>
@@ -134,7 +151,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.09)",
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
   },
   modalContainer: {
     width: "80%",
@@ -179,5 +196,17 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 4,
     left: 3,
+  },
+  deleteButton: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
+    padding: 12,
+    borderRadius: 10,
+  },
+  deleteText: {
+    color: "#fff",
   },
 });
