@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "rn-simple-shopping-list",
+    "name": "Shopika",
     "slug": "rn-simple-shopping-list",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,12 +9,14 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true,
+      "entitlements": {
+        "aps-environment": "production"
+      },
       "bundleIdentifier": "com.drumbumdeedum.rnsimpleshoppinglist"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
       }
     },
@@ -28,7 +30,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
