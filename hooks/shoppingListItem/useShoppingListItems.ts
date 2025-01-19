@@ -50,17 +50,17 @@ const useShoppingListItems = (shoppingListId: string) => {
             payload.new &&
             payload.new.shopping_list_id === shoppingListId
           ) {
-            setListItems((prev) =>
-              prev
-                .map((item) => {
+            setListItems(
+              (prev) =>
+                prev.map((item) => {
                   return item.id === payload.new.id
                     ? (payload.new as ShoppingListItem)
                     : item;
                 })
-                .sort((a, b) => {
+              /* .sort((a, b) => {
                   if (a.checked === b.checked) return 0;
                   return a.checked ? 1 : -1;
-                })
+                }) */
             );
           }
         }
