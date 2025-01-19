@@ -62,6 +62,9 @@ const ShoppingList = () => {
             {
               borderColor: Colors[theme ?? "light"].border,
             },
+            {
+              backgroundColor: Colors[theme ?? "light"].backgroundSecondary,
+            },
           ]}
         >
           <TouchableOpacity
