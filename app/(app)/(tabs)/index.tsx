@@ -24,6 +24,7 @@ import { formatDate } from "@/utils/dateUtils";
 import { Entypo } from "@expo/vector-icons";
 import { ShoppingList } from "@/types";
 import CardView from "@/components/ui/CardView";
+import ShoppingListSettingsModal from "@/components/ui/modals/ShoppingListSettingsModal";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -67,26 +68,10 @@ export default function HomeScreen() {
         },
       ]}
     >
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={handleModalClose}
-      >
-        <View style={styles.overlay}>
-          <View style={[styles.modalContainer]}>
-            <ThemedText style={styles.modalText}>
-              Hello, I'm a Modal!
-            </ThemedText>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={handleModalClose}
-            >
-              <ThemedText style={styles.buttonText}>Close</ThemedText>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+      <ShoppingListSettingsModal
+        modalVisible={modalVisible}
+        onClose={handleModalClose}
+      />
       <ThemedView
         style={[
           styles.header,
@@ -162,46 +147,5 @@ const styles = StyleSheet.create({
   },
   editButton: {
     padding: 8,
-  },
-  // -- MODAL STYLES --
-  openButton: {
-    backgroundColor: "#2196F3",
-    padding: 12,
-    borderRadius: 8,
-  },
-  closeButton: {
-    backgroundColor: "#FF5A5F",
-    padding: 12,
-    borderRadius: 8,
-    marginTop: 20,
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  overlay: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.09)",
-  },
-  modalContainer: {
-    width: "80%",
-    backgroundColor: "white",
-    borderRadius: 10,
-    padding: 20,
-    alignItems: "center",
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-  },
-  modalText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 20,
   },
 });
