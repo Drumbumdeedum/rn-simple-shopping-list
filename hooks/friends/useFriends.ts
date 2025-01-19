@@ -4,9 +4,10 @@ import { fetchAllFriendStatusesByUserId } from ".";
 import { createNewFriendRequest, FriendRequestError } from ".";
 import { fetchUserByEmail } from "../profile";
 import { supabase } from "@/utils/initSupabase";
+import useUserStore from "@/state/userStore";
 
 export const useFriends = (user: User | null) => {
-  const [friends, setFriends] = useState<FriendStatus[]>([]);
+  const { friends, setFriends, addFriend } = useUserStore();
 
   useEffect(() => {
     const fetchFriends = async () => {
@@ -18,7 +19,7 @@ export const useFriends = (user: User | null) => {
     fetchFriends();
   }, [user]);
 
-  const handleAddFriend = async (friendEmail: string) => {
+  const addNewFriend = async (friendEmail: string) => {
     const result = await fetchUserByEmail(friendEmail);
     if (!user) return;
     if (!result) {
@@ -41,7 +42,7 @@ export const useFriends = (user: User | null) => {
         email: friendEmail,
         accepted: fr.accepted,
       };
-      setFriends((prev) => [...prev, frs]);
+      addFriend(frs);
     } catch (e) {
       if (e instanceof FriendRequestError) {
         console.log(e.message);
@@ -66,8 +67,8 @@ export const useFriends = (user: User | null) => {
               payload.new.user_id === user.id &&
               payload.new.accepted === true
             ) {
-              setFriends((prev) =>
-                prev.map((fr) =>
+              setFriends(
+                friends.map((fr) =>
                   fr.id === payload.new.friend_id
                     ? { ...fr, accepted: true }
                     : fr
@@ -86,6 +87,6 @@ export const useFriends = (user: User | null) => {
   return {
     friends,
     setFriends,
-    handleAddFriend,
+    addNewFriend,
   };
 };

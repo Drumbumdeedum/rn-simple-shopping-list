@@ -21,13 +21,13 @@ import CardView from "@/components/ui/CardView";
 
 export default function FriendsScreen() {
   const theme = useColorScheme();
-  const { user } = useUserStore();
+  const { user, friends, addFriend } = useUserStore();
   const [friendEmail, setFriendEmail] = useState<string>("");
-  const { friends, setFriends, handleAddFriend } = useFriends(user);
+  const { addNewFriend } = useFriends(user);
   const { friendRequests, setFriendRequests } = useFriendRequests(user);
 
-  const addFriend = () => {
-    handleAddFriend(friendEmail);
+  const handleAddFriend = () => {
+    addNewFriend(friendEmail);
     setFriendEmail("");
   };
 
@@ -37,7 +37,7 @@ export default function FriendsScreen() {
       const updated = friendRequests.find((fr) => fr.id === result.user_id);
       if (updated) {
         updated.accepted = true;
-        setFriends((prev) => [...prev, updated]);
+        addFriend(updated);
         setFriendRequests((prev) =>
           prev.filter((fr) => fr.id !== result.user_id)
         );
@@ -69,7 +69,7 @@ export default function FriendsScreen() {
             value={friendEmail}
             onChange={(e) => setFriendEmail(e.nativeEvent.text)}
           />
-          <TouchableOpacity onPress={addFriend}>
+          <TouchableOpacity onPress={handleAddFriend}>
             <Entypo
               name="add-user"
               size={24}

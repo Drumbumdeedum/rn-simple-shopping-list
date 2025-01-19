@@ -17,12 +17,13 @@ import React from "react";
 import LoadingScreen from "@/components/LoadingScreen";
 import { fetchUserById } from "@/hooks/profile";
 import useUserStore from "@/state/userStore";
+import { fetchAllFriendStatusesByUserId } from "@/hooks/friends";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const session = useSession();
-  const { user, setUser } = useUserStore();
+  const { user, setUser, setFriends } = useUserStore();
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require("../../assets/fonts/SpaceMono-Regular.ttf"),
@@ -42,6 +43,12 @@ export default function RootLayout() {
         setUser(resultUser);
       };
       fetchUser(sessionObject.user.id);
+
+      const fetchFriends = async (id: string) => {
+        const friends = await fetchAllFriendStatusesByUserId(id);
+        setFriends(friends);
+      };
+      fetchFriends(sessionObject.user.id);
     }
   }, [session]);
 

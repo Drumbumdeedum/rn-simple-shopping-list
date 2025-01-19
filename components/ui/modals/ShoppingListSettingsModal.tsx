@@ -5,18 +5,21 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import React from "react";
+import React, { ReactNode } from "react";
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
+import { ThemedView } from "@/components/ThemedView";
 
 type ShoppingListSettingsModal = {
   modalVisible: boolean;
   onClose: () => void;
+  children: ReactNode;
 };
 
 const ShoppingListSettingsModal = ({
   modalVisible,
   onClose,
+  children,
 }: ShoppingListSettingsModal) => {
   const theme = useColorScheme();
   return (
@@ -34,6 +37,7 @@ const ShoppingListSettingsModal = ({
           ]}
         >
           <ThemedText>Hello, I'm a Modal!</ThemedText>
+          <ThemedView>{children}</ThemedView>
           <TouchableOpacity onPress={onClose}>
             <ThemedText>Close</ThemedText>
           </TouchableOpacity>

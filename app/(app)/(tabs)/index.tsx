@@ -71,7 +71,9 @@ export default function HomeScreen() {
       <ShoppingListSettingsModal
         modalVisible={modalVisible}
         onClose={handleModalClose}
-      />
+      >
+        <ThemedText>MODAL CONTENT</ThemedText>
+      </ShoppingListSettingsModal>
       <ThemedView
         style={[
           styles.header,
