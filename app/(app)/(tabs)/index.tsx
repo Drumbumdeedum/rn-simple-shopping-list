@@ -25,6 +25,7 @@ import { Entypo } from "@expo/vector-icons";
 import { ShoppingList } from "@/types";
 import CardView from "@/components/ui/CardView";
 import ShoppingListSettingsModal from "@/components/ui/modals/ShoppingListSettingsModal";
+import { supabase } from "@/utils/initSupabase";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -43,6 +44,34 @@ export default function HomeScreen() {
       }
     };
     fetchShoppingLists();
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      const channel = supabase
+        .channel("insert new list access")
+        .on(
+          "postgres_changes",
+          { event: "INSERT", schema: "public", table: "shopping_lists_access" },
+          async (payload) => {
+            if (
+              payload &&
+              payload.new &&
+              payload.new.user_id === user.id &&
+              !shoppingLists
+                .map((sl) => sl.id)
+                .includes(payload.new.shopping_list_id)
+            ) {
+              const resultLists = await fetchShoppingListsByUserId(user.id);
+              setShoppingLists(resultLists);
+            }
+          }
+        )
+        .subscribe();
+      return () => {
+        channel.unsubscribe();
+      };
+    }
   }, [user]);
 
   const handleCreateNewShoppingList = async () => {

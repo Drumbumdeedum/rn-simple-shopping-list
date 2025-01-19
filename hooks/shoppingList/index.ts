@@ -62,7 +62,4 @@ export const shareShoppingList = async (
       user_id: userId,
     })
     .select("*");
-
-  console.log(data);
-  console.log(error);
 };
