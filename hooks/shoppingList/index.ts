@@ -36,3 +36,19 @@ export const createNewShoppingList = async (
     .single();
   return data as ShoppingList;
 };
+
+export const shareShoppingList = async (
+  shoppingListId: string,
+  userId: string
+) => {
+  const { data, error } = await supabase
+    .from("shopping_lists_access")
+    .insert({
+      shopping_list_id: shoppingListId,
+      user_id: userId,
+    })
+    .select("*");
+
+  console.log(data);
+  console.log(error);
+};

@@ -91,7 +91,7 @@ const ShoppingList = () => {
         </ThemedView>
         <FlatList
           data={listItems}
-          style={styles.shoppingLists}
+          style={styles.listItems}
           renderItem={({ item }) => (
             <CardView onPress={() => handleItemChecked(item)}>
               <ThemedText style={styles.itemName}>{item.name}</ThemedText>
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flex: 1,
   },
-  shoppingLists: {
+  listItems: {
     padding: 12,
     display: "flex",
     flexDirection: "column",

@@ -1,5 +1,5 @@
 import { FriendStatus, User } from "@/types";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { fetchAllFriendStatusesByUserId } from ".";
 import { createNewFriendRequest, FriendRequestError } from ".";
 import { fetchUserByEmail } from "../profile";

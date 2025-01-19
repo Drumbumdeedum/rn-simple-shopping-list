@@ -31,6 +31,7 @@ export default function HomeScreen() {
   const { user } = useUserStore();
   const theme = useColorScheme();
   const [shoppingLists, setShoppingLists] = useState<ShoppingList[]>([]);
+  const [selectedList, setSelectedList] = useState<ShoppingList | null>(null);
   const [listName, setListName] = useState<string>("");
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -52,12 +53,19 @@ export default function HomeScreen() {
     }
   };
 
-  const onEdit = (event: GestureResponderEvent) => {
+  const onOpenSettingsModal = (
+    event: GestureResponderEvent,
+    shoppingList: ShoppingList
+  ) => {
     event.preventDefault();
     event.stopPropagation();
+    setSelectedList(shoppingList);
     setModalVisible(true);
   };
-  const handleModalClose = () => setModalVisible(false);
+  const handleModalClose = () => {
+    setModalVisible(false);
+    setSelectedList(null);
+  };
 
   return (
     <SafeAreaView
@@ -69,11 +77,10 @@ export default function HomeScreen() {
       ]}
     >
       <ShoppingListSettingsModal
+        shoppingList={selectedList}
         modalVisible={modalVisible}
         onClose={handleModalClose}
-      >
-        <ThemedText>MODAL CONTENT</ThemedText>
-      </ShoppingListSettingsModal>
+      />
       <ThemedView
         style={[
           styles.header,
@@ -107,7 +114,7 @@ export default function HomeScreen() {
                 </ThemedText>
               </View>
               <TouchableOpacity
-                onPress={(e) => onEdit(e)}
+                onPress={(e) => onOpenSettingsModal(e, item)}
                 style={styles.editButton}
               >
                 <Entypo
