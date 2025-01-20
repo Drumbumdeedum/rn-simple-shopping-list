@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
     left: 36,
   },
   iconCheck: {
-    top: 22,
+    top: 23,
     left: 40,
   },
 });
