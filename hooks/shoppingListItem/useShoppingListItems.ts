@@ -2,9 +2,13 @@ import { ShoppingListItem } from "@/types";
 import { supabase } from "@/utils/initSupabase";
 import { useEffect, useState } from "react";
 import { fetchShoppingListItemsByShoppingListId } from ".";
+import { AppState, AppStateStatus } from "react-native";
 
 const useShoppingListItems = (shoppingListId: string) => {
   const [listItems, setListItems] = useState<ShoppingListItem[]>([]);
+  const [appState, setAppState] = useState<AppStateStatus>(
+    AppState.currentState
+  );
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -16,60 +20,62 @@ const useShoppingListItems = (shoppingListId: string) => {
     fetchItems();
   }, []);
 
-  useEffect(() => {
-    const channel = supabase
+  const initializeSubscriptions = () => {
+    const insertChannel = supabase
       .channel("insert_new_shopping_list_item")
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "shopping_list_items" },
         (payload) => {
-          if (
-            payload &&
-            payload.new &&
-            payload.new.shopping_list_id === shoppingListId
-          ) {
+          if (payload.new?.shopping_list_id === shoppingListId) {
             setListItems((prev) => [...prev, payload.new as ShoppingListItem]);
           }
         }
       )
       .subscribe();
-    return () => {
-      channel.unsubscribe();
-    };
-  }, []);
 
-  useEffect(() => {
-    const channel = supabase
+    const updateChannel = supabase
       .channel("update_shopping_list_item")
       .on(
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "shopping_list_items" },
         (payload) => {
-          if (
-            payload &&
-            payload.new &&
-            payload.new.shopping_list_id === shoppingListId
-          ) {
-            setListItems(
-              (prev) =>
-                prev.map((item) => {
-                  return item.id === payload.new.id
-                    ? (payload.new as ShoppingListItem)
-                    : item;
-                })
-              /* .sort((a, b) => {
-                  if (a.checked === b.checked) return 0;
-                  return a.checked ? 1 : -1;
-                }) */
+          if (payload.new?.shopping_list_id === shoppingListId) {
+            setListItems((prev) =>
+              prev.map((item) =>
+                item.id === payload.new.id
+                  ? (payload.new as ShoppingListItem)
+                  : item
+              )
             );
           }
         }
       )
       .subscribe();
+
     return () => {
-      channel.unsubscribe();
+      insertChannel.unsubscribe();
+      updateChannel.unsubscribe();
     };
-  }, []);
+  };
+
+  useEffect(() => {
+    const handleAppStateChange = (nextAppState: AppStateStatus) => {
+      if (appState.match(/inactive|background/) && nextAppState === "active") {
+        initializeSubscriptions();
+      }
+      setAppState(nextAppState);
+    };
+
+    const subscription = AppState.addEventListener(
+      "change",
+      handleAppStateChange
+    );
+    initializeSubscriptions();
+    return () => {
+      subscription.remove();
+    };
+  }, [shoppingListId, appState]);
 
   return {
     listItems,

@@ -3,9 +3,13 @@ import { useState, useEffect } from "react";
 import { fetchFriendRequestsByUserId } from ".";
 import { supabase } from "@/utils/initSupabase";
 import { fetchUserById } from "../profile";
+import { AppState, AppStateStatus } from "react-native";
 
 export const useFriendRequests = (user: User | null) => {
   const [friendRequests, setFriendRequests] = useState<FriendStatus[]>([]);
+  const [appState, setAppState] = useState<AppStateStatus>(
+    AppState.currentState
+  );
 
   useEffect(() => {
     const fetchFriends = async () => {
@@ -17,8 +21,8 @@ export const useFriendRequests = (user: User | null) => {
     fetchFriends();
   }, [user]);
 
-  useEffect(() => {
-    const channel = supabase
+  const initializeSubscriptions = () => {
+    const insertChannel = supabase
       .channel("insert_new_friend_request")
       .on(
         "postgres_changes",
@@ -47,10 +51,29 @@ export const useFriendRequests = (user: User | null) => {
         }
       )
       .subscribe();
+
     return () => {
-      channel.unsubscribe();
+      insertChannel.unsubscribe();
     };
-  }, []);
+  };
+
+  useEffect(() => {
+    const handleAppStateChange = (nextAppState: AppStateStatus) => {
+      if (appState.match(/inactive|background/) && nextAppState === "active") {
+        initializeSubscriptions();
+      }
+      setAppState(nextAppState);
+    };
+
+    const subscription = AppState.addEventListener(
+      "change",
+      handleAppStateChange
+    );
+    initializeSubscriptions();
+    return () => {
+      subscription.remove();
+    };
+  }, [appState, friendRequests]);
 
   return {
     friendRequests,

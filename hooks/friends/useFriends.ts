@@ -1,14 +1,17 @@
 import { FriendStatus, User } from "@/types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { fetchAllFriendStatusesByUserId } from ".";
 import { createNewFriendRequest, FriendRequestError } from ".";
 import { fetchUserByEmail } from "../profile";
 import { supabase } from "@/utils/initSupabase";
 import useUserStore from "@/state/userStore";
+import { AppState, AppStateStatus } from "react-native";
 
 export const useFriends = (user: User | null) => {
   const { friends, setFriends, addFriend } = useUserStore();
-
+  const [appState, setAppState] = useState<AppStateStatus>(
+    AppState.currentState
+  );
   useEffect(() => {
     const fetchFriends = async () => {
       if (user) {
@@ -52,37 +55,51 @@ export const useFriends = (user: User | null) => {
     }
   };
 
-  useEffect(() => {
-    if (user) {
-      const channel = supabase
-        .channel("update_friend_request_accepted")
-        .on(
-          "postgres_changes",
-          { event: "UPDATE", schema: "public", table: "friends" },
-          async (payload) => {
-            if (
-              payload &&
-              payload.new &&
-              user &&
-              payload.new.user_id === user.id &&
-              payload.new.accepted === true
-            ) {
-              setFriends(
-                friends.map((fr) =>
-                  fr.id === payload.new.friend_id
-                    ? { ...fr, accepted: true }
-                    : fr
-                )
-              );
-            }
+  const initializeSubscriptions = () => {
+    const updateChannel = supabase
+      .channel("update_friend_request_accepted")
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "friends" },
+        async (payload) => {
+          if (
+            payload &&
+            payload.new &&
+            user &&
+            payload.new.user_id === user.id &&
+            payload.new.accepted === true
+          ) {
+            setFriends(
+              friends.map((fr) =>
+                fr.id === payload.new.friend_id ? { ...fr, accepted: true } : fr
+              )
+            );
           }
-        )
-        .subscribe();
-      return () => {
-        channel.unsubscribe();
-      };
-    }
-  }, [user, friends]);
+        }
+      )
+      .subscribe();
+    return () => {
+      updateChannel.unsubscribe();
+    };
+  };
+
+  useEffect(() => {
+    const handleAppStateChange = (nextAppState: AppStateStatus) => {
+      if (appState.match(/inactive|background/) && nextAppState === "active") {
+        initializeSubscriptions();
+      }
+      setAppState(nextAppState);
+    };
+
+    const subscription = AppState.addEventListener(
+      "change",
+      handleAppStateChange
+    );
+    initializeSubscriptions();
+    return () => {
+      subscription.remove();
+    };
+  }, [user, appState, friends]);
 
   return {
     friends,

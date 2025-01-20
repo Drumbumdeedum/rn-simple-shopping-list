@@ -52,7 +52,7 @@ export default function HomeScreen() {
   useEffect(() => {
     if (user) {
       const channel = supabase
-        .channel("insert new list access")
+        .channel("insert_new_list_access")
         .on(
           "postgres_changes",
           { event: "INSERT", schema: "public", table: "shopping_lists_access" },
