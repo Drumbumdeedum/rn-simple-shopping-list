@@ -1,5 +1,6 @@
 import {
   FlatList,
+  GestureResponderEvent,
   StyleSheet,
   TouchableOpacity,
   useColorScheme,
@@ -22,6 +23,7 @@ import { TextInput } from "react-native-gesture-handler";
 import useShoppingListItems from "@/hooks/shoppingListItem/useShoppingListItems";
 import { Entypo } from "@expo/vector-icons";
 import CardView from "@/components/ui/CardView";
+import EditShoppingListItemModal from "@/components/ui/modals/EditShoppingListItemModal";
 
 const ShoppingList = () => {
   const { id } = useLocalSearchParams();
@@ -31,6 +33,10 @@ const ShoppingList = () => {
   const router = useRouter();
   const theme = useColorScheme();
   const inputRef = useRef<TextInput>(null);
+  const [selectedItem, setSelectedItem] = useState<ShoppingListItem | null>(
+    null
+  );
+  const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
 
   const handleCreateNewItem = async () => {
     if (id && typeof id === "string") {
@@ -39,10 +45,27 @@ const ShoppingList = () => {
     }
   };
 
-  const handleItemChecked = async (item: ShoppingListItem) => {
-    if (id && typeof id === "string") {
-      await updateShoppingListItemChecked(item.id, !item.checked);
-    }
+  const handleItemChecked = async (
+    event: GestureResponderEvent,
+    item: ShoppingListItem
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+    await updateShoppingListItemChecked(item.id, !item.checked);
+  };
+
+  const openEditModal = async (item: ShoppingListItem) => {
+    setSelectedItem(item);
+    setEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setSelectedItem(null);
+    setEditModalOpen(false);
+  };
+
+  const updateShoppingListItem = () => {
+    console.log("UPDATE");
   };
 
   return (
@@ -55,6 +78,12 @@ const ShoppingList = () => {
         },
       ]}
     >
+      <EditShoppingListItemModal
+        shoppingListItem={selectedItem}
+        modalOpen={editModalOpen}
+        onClose={closeEditModal}
+        onUpdate={updateShoppingListItem}
+      />
       <ThemedView style={styles.listContainer}>
         <ThemedView
           style={[
@@ -96,23 +125,25 @@ const ShoppingList = () => {
           data={listItems}
           style={styles.listItems}
           renderItem={({ item }) => (
-            <CardView onPress={() => handleItemChecked(item)}>
+            <CardView onPress={() => openEditModal(item)}>
               <ThemedText style={styles.itemName}>{item.name}</ThemedText>
               <View style={styles.iconContainer}>
-                <Entypo
-                  style={styles.icon}
-                  name="circle"
-                  size={24}
-                  color={Colors[theme ?? "light"].tint}
-                />
-                {item.checked && (
+                <TouchableOpacity onPress={(e) => handleItemChecked(e, item)}>
                   <Entypo
-                    style={[styles.icon, styles.iconCheck]}
-                    name="check"
-                    size={18}
+                    style={styles.icon}
+                    name="circle"
+                    size={24}
                     color={Colors[theme ?? "light"].tint}
                   />
-                )}
+                  {item.checked && (
+                    <Entypo
+                      style={[styles.icon, styles.iconCheck]}
+                      name="check"
+                      size={18}
+                      color={Colors[theme ?? "light"].tint}
+                    />
+                  )}
+                </TouchableOpacity>
               </View>
             </CardView>
           )}
