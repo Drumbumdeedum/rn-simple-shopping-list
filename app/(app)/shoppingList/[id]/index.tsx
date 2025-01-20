@@ -74,7 +74,7 @@ const ShoppingList = () => {
         styles.listContainer,
         { flex: 1 },
         {
-          backgroundColor: Colors[theme ?? "light"].background,
+          backgroundColor: Colors[theme ?? "light"].backgroundSecondary,
         },
       ]}
     >
