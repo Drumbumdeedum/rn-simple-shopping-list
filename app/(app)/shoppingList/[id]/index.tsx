@@ -125,26 +125,30 @@ const ShoppingList = () => {
           data={listItems}
           style={styles.listItems}
           renderItem={({ item }) => (
-            <CardView onPress={() => openEditModal(item)}>
+            <CardView
+              onPress={() => openEditModal(item)}
+              style={{ padding: 0 }}
+            >
               <ThemedText style={styles.itemName}>{item.name}</ThemedText>
-              <View style={styles.iconContainer}>
-                <TouchableOpacity onPress={(e) => handleItemChecked(e, item)}>
+              <TouchableOpacity
+                style={styles.iconContainer}
+                onPress={(e) => handleItemChecked(e, item)}
+              >
+                <Entypo
+                  style={styles.icon}
+                  name="circle"
+                  size={24}
+                  color={Colors[theme ?? "light"].tint}
+                />
+                {item.checked && (
                   <Entypo
-                    style={styles.icon}
-                    name="circle"
-                    size={24}
+                    style={[styles.icon, styles.iconCheck]}
+                    name="check"
+                    size={16}
                     color={Colors[theme ?? "light"].tint}
                   />
-                  {item.checked && (
-                    <Entypo
-                      style={[styles.icon, styles.iconCheck]}
-                      name="check"
-                      size={18}
-                      color={Colors[theme ?? "light"].tint}
-                    />
-                  )}
-                </TouchableOpacity>
-              </View>
+                )}
+              </TouchableOpacity>
             </CardView>
           )}
         />
@@ -183,18 +187,21 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   itemName: {
+    padding: 18,
     flex: 1,
   },
   iconContainer: {
+    width: 80,
+    height: 60,
     position: "relative",
-    width: 24,
-    height: 24,
   },
   icon: {
     position: "absolute",
+    top: 18,
+    left: 36,
   },
   iconCheck: {
-    top: 4,
-    left: 3,
+    top: 22,
+    left: 40,
   },
 });
