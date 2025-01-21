@@ -1,12 +1,14 @@
 import {
+  KeyboardAvoidingView,
   Modal,
+  Platform,
   StyleSheet,
   TouchableOpacity,
   TouchableWithoutFeedback,
   useColorScheme,
   View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ShoppingListItem } from "@/types";
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
@@ -27,11 +29,18 @@ const EditShoppingListItemModal = ({
   onClose,
   onUpdate,
 }: EditShoppingListItemModalProps) => {
+  const inputRef = useRef(null);
   const theme = useColorScheme();
   const [item, setItem] = useState<ShoppingListItem | null>(shoppingListItem);
+  const [itemName, setItemName] = useState<string>(
+    shoppingListItem ? shoppingListItem.name : ""
+  );
 
   useEffect(() => {
-    setItem(shoppingListItem);
+    if (shoppingListItem && shoppingListItem.name !== itemName) {
+      setItem(shoppingListItem);
+      setItemName(shoppingListItem.name);
+    }
   }, [shoppingListItem]);
 
   return (
@@ -41,37 +50,37 @@ const EditShoppingListItemModal = ({
       visible={modalOpen}
       onRequestClose={onClose}
     >
-      <TouchableWithoutFeedback onPress={onClose}>
-        <View style={styles.overlay}>
-          <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
-            <View
-              style={[
-                styles.modalContainer,
-                { backgroundColor: Colors[theme ?? "light"].background },
-              ]}
-            >
-              <ThemedText
-                type="title"
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        <TouchableWithoutFeedback onPress={onClose}>
+          <View style={styles.overlay}>
+            <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
+              <View
                 style={[
-                  styles.modalHeader,
-                  {
-                    backgroundColor:
-                      Colors[theme ?? "light"].backgroundSecondary,
-                  },
+                  styles.modalContainer,
+                  { backgroundColor: Colors[theme ?? "light"].background },
                 ]}
               >
-                Edit item
-              </ThemedText>
-              {item && (
+                <ThemedText
+                  type="title"
+                  style={[
+                    styles.modalHeader,
+                    {
+                      backgroundColor:
+                        Colors[theme ?? "light"].backgroundSecondary,
+                    },
+                  ]}
+                >
+                  Edit item
+                </ThemedText>
                 <ThemedView style={styles.modalContent}>
                   <ThemedInput
-                    value={item?.name}
-                    onChange={(e) =>
-                      setItem((item) =>
-                        item ? { ...item, name: e.nativeEvent.text } : null
-                      )
-                    }
-                  ></ThemedInput>
+                    ref={inputRef}
+                    value={itemName}
+                    onChangeText={setItemName}
+                  />
 
                   <ThemedView>
                     <TouchableOpacity
@@ -91,11 +100,11 @@ const EditShoppingListItemModal = ({
                     </TouchableOpacity>
                   </ThemedView>
                 </ThemedView>
-              )}
-            </View>
-          </TouchableWithoutFeedback>
-        </View>
-      </TouchableWithoutFeedback>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </Modal>
   );
 };
