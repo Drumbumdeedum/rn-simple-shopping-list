@@ -4,12 +4,12 @@ import {
   StyleSheet,
   TouchableOpacity,
   useColorScheme,
-  View,
 } from "react-native";
 import React, { useRef, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
   createNewShoppingListItem,
+  deleteShoppingListItem,
   updateShoppingListItemChecked,
 } from "@/hooks/shoppingListItem";
 import { ShoppingListItem } from "@/types";
@@ -24,11 +24,12 @@ import useShoppingListItems from "@/hooks/shoppingListItem/useShoppingListItems"
 import { Entypo } from "@expo/vector-icons";
 import CardView from "@/components/ui/CardView";
 import EditShoppingListItemModal from "@/components/ui/modals/EditShoppingListItemModal";
+import ConfirmDeleteModal from "@/components/ui/modals/ConfirmDeleteModal";
 
 const ShoppingList = () => {
   const { id } = useLocalSearchParams();
   if (!id) return;
-  const { listItems } = useShoppingListItems(id as string);
+  const { listItems, setListItems } = useShoppingListItems(id as string);
   const [itemName, setItemName] = useState<string>("");
   const router = useRouter();
   const theme = useColorScheme();
@@ -37,6 +38,7 @@ const ShoppingList = () => {
     null
   );
   const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
+  const [deleteItemModalVisible, setDeleteItemModalVisible] = useState(false);
 
   const handleCreateNewItem = async () => {
     if (id && typeof id === "string") {
@@ -68,6 +70,29 @@ const ShoppingList = () => {
     console.log("UPDATE");
   };
 
+  const handleDeleteItem = () => {
+    setEditModalOpen(false);
+    setDeleteItemModalVisible(true);
+  };
+
+  const handleDeleteItemModalClose = () => {
+    setDeleteItemModalVisible(false);
+    setTimeout(() => {
+      setSelectedItem(null);
+    }, 300);
+  };
+
+  const confirmDeleteItem = async () => {
+    if (selectedItem) {
+      await deleteShoppingListItem(selectedItem.id);
+      setListItems((prev) =>
+        prev.filter((item) => item.id !== selectedItem.id)
+      );
+      setSelectedItem(null);
+      setDeleteItemModalVisible(false);
+    }
+  };
+
   return (
     <SafeAreaView
       style={[
@@ -83,6 +108,14 @@ const ShoppingList = () => {
         modalOpen={editModalOpen}
         onClose={closeEditModal}
         onUpdate={updateShoppingListItem}
+        onDeleteItem={handleDeleteItem}
+      />
+      <ConfirmDeleteModal
+        itemName={selectedItem?.name || ""}
+        deleteLabel={"Delete item"}
+        modalVisible={deleteItemModalVisible}
+        onClose={handleDeleteItemModalClose}
+        onConfirm={confirmDeleteItem}
       />
       <ThemedView style={styles.listContainer}>
         <ThemedView
@@ -122,35 +155,42 @@ const ShoppingList = () => {
           </TouchableOpacity>
         </ThemedView>
         <FlatList
-          data={listItems}
+          data={listItems || []}
+          ListEmptyComponent={
+            <ThemedText style={{ textAlign: "center", marginTop: 20 }}>
+              No items added.
+            </ThemedText>
+          }
           style={styles.listItems}
-          renderItem={({ item }) => (
-            <CardView
-              onPress={() => openEditModal(item)}
-              style={{ padding: 0 }}
-            >
-              <ThemedText style={styles.itemName}>{item.name}</ThemedText>
-              <TouchableOpacity
-                style={styles.iconContainer}
-                onPress={(e) => handleItemChecked(e, item)}
+          renderItem={({ item }) =>
+            item && (
+              <CardView
+                onPress={() => openEditModal(item)}
+                style={{ padding: 0 }}
               >
-                <Entypo
-                  style={styles.icon}
-                  name="circle"
-                  size={24}
-                  color={Colors[theme ?? "light"].tint}
-                />
-                {item.checked && (
+                <ThemedText style={styles.itemName}>{item.name}</ThemedText>
+                <TouchableOpacity
+                  style={styles.iconContainer}
+                  onPress={(e) => handleItemChecked(e, item)}
+                >
                   <Entypo
-                    style={[styles.icon, styles.iconCheck]}
-                    name="check"
-                    size={16}
+                    style={styles.icon}
+                    name="circle"
+                    size={24}
                     color={Colors[theme ?? "light"].tint}
                   />
-                )}
-              </TouchableOpacity>
-            </CardView>
-          )}
+                  {item.checked && (
+                    <Entypo
+                      style={[styles.icon, styles.iconCheck]}
+                      name="check"
+                      size={16}
+                      color={Colors[theme ?? "light"].tint}
+                    />
+                  )}
+                </TouchableOpacity>
+              </CardView>
+            )
+          }
         />
         <StatusBar style="auto" />
       </ThemedView>

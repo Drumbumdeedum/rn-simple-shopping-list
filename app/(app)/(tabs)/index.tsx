@@ -27,7 +27,7 @@ import { ShoppingList } from "@/types";
 import CardView from "@/components/ui/CardView";
 import EditShoppingListModal from "@/components/ui/modals/EditShoppingListModal";
 import { supabase } from "@/utils/initSupabase";
-import ConfirmDeleteListModal from "@/components/ui/modals/ConfirmDeleteListModal";
+import ConfirmDeleteModal from "@/components/ui/modals/ConfirmDeleteModal";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -140,11 +140,12 @@ export default function HomeScreen() {
         onClose={handleModalClose}
         onDeleteList={handleDeleteList}
       />
-      <ConfirmDeleteListModal
-        shoppingList={selectedList}
+      <ConfirmDeleteModal
+        itemName={selectedList?.name || ""}
+        deleteLabel={"Delete list"}
         modalVisible={deleteListModalVisible}
         onClose={handleDeleteListModalClose}
-        onDeleteList={confirmDeleteList}
+        onConfirm={confirmDeleteList}
       />
       <ThemedView
         style={[

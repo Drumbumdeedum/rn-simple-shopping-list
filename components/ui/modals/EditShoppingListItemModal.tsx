@@ -13,7 +13,6 @@ import { ShoppingListItem } from "@/types";
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { ThemedView } from "@/components/ThemedView";
-import ThemedInput from "../ThemedInput";
 import { Entypo } from "@expo/vector-icons";
 
 type EditShoppingListItemModalProps = {
@@ -21,6 +20,7 @@ type EditShoppingListItemModalProps = {
   shoppingListItem: ShoppingListItem | null;
   onClose: () => void;
   onUpdate: () => void;
+  onDeleteItem: () => void;
 };
 
 const EditShoppingListItemModal = ({
@@ -28,6 +28,7 @@ const EditShoppingListItemModal = ({
   shoppingListItem,
   onClose,
   onUpdate,
+  onDeleteItem,
 }: EditShoppingListItemModalProps) => {
   const inputRef = useRef(null);
   const theme = useColorScheme();
@@ -76,15 +77,15 @@ const EditShoppingListItemModal = ({
                   Edit item
                 </ThemedText>
                 <ThemedView style={styles.modalContent}>
-                  <ThemedInput
+                  {/*  <ThemedInput
                     ref={inputRef}
                     value={itemName}
                     onChangeText={setItemName}
-                  />
-
+                  /> */}
+                  <ThemedText>{itemName}</ThemedText>
                   <ThemedView>
                     <TouchableOpacity
-                      onPress={() => {}}
+                      onPress={onDeleteItem}
                       style={[
                         styles.deleteButton,
                         { backgroundColor: Colors[theme ?? "light"].error },
@@ -94,7 +95,7 @@ const EditShoppingListItemModal = ({
                         type="defaultSemiBold"
                         style={styles.deleteText}
                       >
-                        Delete list
+                        Delete item
                       </ThemedText>
                       <Entypo name="trash" size={16} color={"#fff"} />
                     </TouchableOpacity>

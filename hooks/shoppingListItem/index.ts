@@ -38,3 +38,7 @@ export const updateShoppingListItemChecked = async (
     })
     .eq("id", id);
 };
+
+export const deleteShoppingListItem = async (id: string) => {
+  await supabase.from("shopping_list_items").delete().eq("id", id);
+};

@@ -10,22 +10,23 @@ import React from "react";
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { ThemedView } from "@/components/ThemedView";
-import { ShoppingList } from "@/types";
 import { Entypo } from "@expo/vector-icons";
 
-type ShoppingListSettingsModalProps = {
-  shoppingList: ShoppingList | null;
+type ConfirmDeleteModalProps = {
+  itemName: string;
+  deleteLabel: string;
   modalVisible: boolean;
   onClose: () => void;
-  onDeleteList: () => void;
+  onConfirm: () => void;
 };
 
-const ConfirmDeleteListModal = ({
-  shoppingList,
+const ConfirmDeleteModal = ({
+  itemName,
+  deleteLabel,
   modalVisible,
   onClose,
-  onDeleteList,
-}: ShoppingListSettingsModalProps) => {
+  onConfirm,
+}: ConfirmDeleteModalProps) => {
   const theme = useColorScheme();
 
   return (
@@ -43,7 +44,7 @@ const ConfirmDeleteListModal = ({
               { backgroundColor: Colors[theme ?? "light"].background },
             ]}
           >
-            {shoppingList && (
+            {itemName && (
               <ThemedText
                 type="title"
                 style={[
@@ -54,25 +55,25 @@ const ConfirmDeleteListModal = ({
                   },
                 ]}
               >
-                {shoppingList.name}
+                {deleteLabel}
               </ThemedText>
             )}
             <ThemedView style={styles.modalContent}>
               <ThemedView style={styles.warningText}>
                 <ThemedText>
-                  Are you shure you want to delete this list?
+                  Are you shure you want to delete {itemName}?
                 </ThemedText>
               </ThemedView>
               <ThemedView>
                 <TouchableOpacity
-                  onPress={onDeleteList}
+                  onPress={onConfirm}
                   style={[
                     styles.deleteButton,
                     { backgroundColor: Colors[theme ?? "light"].error },
                   ]}
                 >
                   <ThemedText type="defaultSemiBold" style={styles.deleteText}>
-                    Delete list
+                    {deleteLabel}
                   </ThemedText>
                   <Entypo name="trash" size={16} color={"#fff"} />
                 </TouchableOpacity>
@@ -85,7 +86,7 @@ const ConfirmDeleteListModal = ({
   );
 };
 
-export default ConfirmDeleteListModal;
+export default ConfirmDeleteModal;
 
 const styles = StyleSheet.create({
   overlay: {
