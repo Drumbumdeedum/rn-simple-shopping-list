@@ -25,7 +25,7 @@ import { formatDate } from "@/utils/dateUtils";
 import { Entypo } from "@expo/vector-icons";
 import { ShoppingList } from "@/types";
 import CardView from "@/components/ui/CardView";
-import ShoppingListSettingsModal from "@/components/ui/modals/ShoppingListSettingsModal";
+import EditShoppingListModal from "@/components/ui/modals/EditShoppingListModal";
 import { supabase } from "@/utils/initSupabase";
 import ConfirmDeleteListModal from "@/components/ui/modals/ConfirmDeleteListModal";
 
@@ -134,7 +134,7 @@ export default function HomeScreen() {
         },
       ]}
     >
-      <ShoppingListSettingsModal
+      <EditShoppingListModal
         shoppingList={selectedList}
         modalVisible={settingsModalVisible}
         onClose={handleModalClose}

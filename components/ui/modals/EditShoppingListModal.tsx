@@ -17,19 +17,19 @@ import CardView from "../CardView";
 import { Entypo } from "@expo/vector-icons";
 import { getAccessByListId, shareShoppingList } from "@/hooks/shoppingList";
 
-type ShoppingListSettingsModal = {
+type EditShoppingListModalProps = {
   shoppingList: ShoppingList | null;
   modalVisible: boolean;
   onClose: () => void;
   onDeleteList: () => void;
 };
 
-const ShoppingListSettingsModal = ({
+const EditShoppingListModal = ({
   shoppingList,
   modalVisible,
   onClose,
   onDeleteList,
-}: ShoppingListSettingsModal) => {
+}: EditShoppingListModalProps) => {
   const theme = useColorScheme();
   const { user, friends } = useUserStore();
   const [usersWithAccess, setUsersWithAccess] = useState<string[]>([]);
@@ -144,7 +144,7 @@ const ShoppingListSettingsModal = ({
   );
 };
 
-export default ShoppingListSettingsModal;
+export default EditShoppingListModal;
 
 const styles = StyleSheet.create({
   overlay: {
