@@ -15,7 +15,11 @@ import { FriendStatus, ShoppingList } from "@/types";
 import useUserStore from "@/state/userStore";
 import CardView from "../CardView";
 import { Entypo } from "@expo/vector-icons";
-import { getAccessByListId, shareShoppingList } from "@/hooks/shoppingList";
+import {
+  getAccessByListId,
+  shareShoppingList,
+  unShareShoppingList,
+} from "@/hooks/shoppingList";
 
 type EditShoppingListModalProps = {
   shoppingList: ShoppingList | null;
@@ -35,7 +39,11 @@ const EditShoppingListModal = ({
   const [usersWithAccess, setUsersWithAccess] = useState<string[]>([]);
 
   const onShareList = (friend: FriendStatus) => {
-    if (shoppingList) {
+    if (!shoppingList) return;
+    if (usersWithAccess.includes(friend.id)) {
+      unShareShoppingList(shoppingList.id, friend.id);
+      setUsersWithAccess((prev) => prev.filter((id) => id !== friend.id));
+    } else {
       shareShoppingList(shoppingList?.id, friend.id);
       setUsersWithAccess((prev) => [...prev, friend.id]);
     }
