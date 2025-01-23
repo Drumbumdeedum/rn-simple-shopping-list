@@ -5,7 +5,6 @@ import {
   FlatList,
   View,
   GestureResponderEvent,
-  Modal,
 } from "react-native";
 
 import { ThemedView } from "@/components/ThemedView";
@@ -15,67 +14,28 @@ import { Colors } from "@/constants/Colors";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/ThemedText";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   createNewShoppingList,
   deleteShoppingListAccess,
-  fetchShoppingListsByUserId,
 } from "@/hooks/shoppingList";
 import { formatDate } from "@/utils/dateUtils";
 import { Entypo } from "@expo/vector-icons";
 import { ShoppingList } from "@/types";
 import CardView from "@/components/ui/CardView";
 import EditShoppingListModal from "@/components/ui/modals/EditShoppingListModal";
-import { supabase } from "@/utils/initSupabase";
 import ConfirmDeleteModal from "@/components/ui/modals/ConfirmDeleteModal";
+import useShoppingLists from "@/hooks/shoppingList/useShoppingLists";
 
 export default function HomeScreen() {
   const router = useRouter();
   const { user } = useUserStore();
   const theme = useColorScheme();
-  const [shoppingLists, setShoppingLists] = useState<ShoppingList[]>([]);
+  const { shoppingLists, setShoppingLists } = useShoppingLists();
   const [selectedList, setSelectedList] = useState<ShoppingList | null>(null);
   const [listName, setListName] = useState<string>("");
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [deleteListModalVisible, setDeleteListModalVisible] = useState(false);
-
-  useEffect(() => {
-    const fetchShoppingLists = async () => {
-      if (user) {
-        const resultLists = await fetchShoppingListsByUserId(user.id);
-        setShoppingLists(resultLists);
-      }
-    };
-    fetchShoppingLists();
-  }, [user]);
-
-  useEffect(() => {
-    if (user) {
-      const channel = supabase
-        .channel("insert_new_list_access")
-        .on(
-          "postgres_changes",
-          { event: "INSERT", schema: "public", table: "shopping_lists_access" },
-          async (payload) => {
-            if (
-              payload &&
-              payload.new &&
-              payload.new.user_id === user.id &&
-              !shoppingLists
-                .map((sl) => sl.id)
-                .includes(payload.new.shopping_list_id)
-            ) {
-              const resultLists = await fetchShoppingListsByUserId(user.id);
-              setShoppingLists(resultLists);
-            }
-          }
-        )
-        .subscribe();
-      return () => {
-        channel.unsubscribe();
-      };
-    }
-  }, [user]);
 
   const handleCreateNewShoppingList = async () => {
     if (user) {
