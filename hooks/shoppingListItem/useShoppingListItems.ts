@@ -10,13 +10,14 @@ const useShoppingListItems = (shoppingListId: string) => {
     AppState.currentState
   );
 
+  const fetchItems = async () => {
+    const items = await fetchShoppingListItemsByShoppingListId(
+      shoppingListId as string
+    );
+    setListItems(items);
+  };
+
   useEffect(() => {
-    const fetchItems = async () => {
-      const items = await fetchShoppingListItemsByShoppingListId(
-        shoppingListId as string
-      );
-      setListItems(items);
-    };
     fetchItems();
   }, []);
 
@@ -72,6 +73,7 @@ const useShoppingListItems = (shoppingListId: string) => {
       handleAppStateChange
     );
     initializeSubscriptions();
+    fetchItems();
     return () => {
       subscription.remove();
     };
