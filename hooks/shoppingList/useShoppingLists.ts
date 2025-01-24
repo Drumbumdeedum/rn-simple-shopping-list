@@ -88,12 +88,12 @@ const useShoppingLists = () => {
 
     if (user) {
       initializeSubscriptions(user);
+      fetchShoppingLists();
     }
-    fetchShoppingLists();
     return () => {
       subscription.remove();
     };
-  }, [user, shoppingLists, appState]);
+  }, [user, appState]);
 
   return {
     shoppingLists,

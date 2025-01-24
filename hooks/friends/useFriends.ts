@@ -62,6 +62,7 @@ export const useFriends = (user: User | null) => {
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "friends" },
         async (payload) => {
+          console.log(payload);
           if (
             payload &&
             payload.new &&

@@ -4,6 +4,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   useColorScheme,
+  View,
 } from "react-native";
 import React, { useRef, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -43,16 +44,14 @@ const ShoppingList = () => {
   const handleCreateNewItem = async () => {
     if (id && typeof id === "string") {
       await createNewShoppingListItem(id, itemName);
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
       setItemName("");
     }
   };
 
-  const handleItemChecked = async (
-    event: GestureResponderEvent,
-    item: ShoppingListItem
-  ) => {
-    event.preventDefault();
-    event.stopPropagation();
+  const handleItemChecked = async (item: ShoppingListItem) => {
     await updateShoppingListItemChecked(item.id, !item.checked);
   };
 
@@ -165,14 +164,11 @@ const ShoppingList = () => {
           renderItem={({ item }) =>
             item && (
               <CardView
-                onPress={() => openEditModal(item)}
-                style={{ padding: 0 }}
+                onLongPress={() => openEditModal(item)}
+                onPress={() => handleItemChecked(item)}
               >
                 <ThemedText style={styles.itemName}>{item.name}</ThemedText>
-                <TouchableOpacity
-                  style={styles.iconContainer}
-                  onPress={(e) => handleItemChecked(e, item)}
-                >
+                <View style={styles.iconContainer}>
                   <Entypo
                     style={styles.icon}
                     name="circle"
@@ -187,7 +183,7 @@ const ShoppingList = () => {
                       color={Colors[theme ?? "light"].tint}
                     />
                   )}
-                </TouchableOpacity>
+                </View>
               </CardView>
             )
           }
@@ -227,21 +223,18 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   itemName: {
-    padding: 18,
     flex: 1,
   },
   iconContainer: {
-    width: 80,
-    height: 60,
     position: "relative",
+    height: 24,
+    width: 24,
   },
   icon: {
     position: "absolute",
-    top: 18,
-    left: 36,
   },
   iconCheck: {
-    top: 23,
-    left: 40,
+    top: 4,
+    left: 4,
   },
 });
