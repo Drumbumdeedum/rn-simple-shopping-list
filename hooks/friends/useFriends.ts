@@ -12,6 +12,7 @@ export const useFriends = (user: User | null) => {
   const [appState, setAppState] = useState<AppStateStatus>(
     AppState.currentState
   );
+
   useEffect(() => {
     const fetchFriends = async () => {
       if (user) {
