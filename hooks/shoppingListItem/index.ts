@@ -30,13 +30,18 @@ export const createNewShoppingListItem = async (
 export const updateShoppingListItemChecked = async (
   id: string,
   checked: boolean
-) => {
-  await supabase
+): Promise<ShoppingListItem> => {
+  const { data, error } = await supabase
     .from("shopping_list_items")
     .update({
       checked: checked,
     })
-    .eq("id", id);
+    .eq("id", id)
+    .select("*")
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data;
 };
 
 export const deleteShoppingListItem = async (id: string) => {

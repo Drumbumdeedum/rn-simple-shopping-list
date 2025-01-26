@@ -3,6 +3,7 @@ import { supabase } from "@/utils/initSupabase";
 import { useEffect, useState } from "react";
 import { fetchShoppingListItemsByShoppingListId } from ".";
 import { AppState, AppStateStatus } from "react-native";
+import { deepEqual } from "@/utils";
 
 const useShoppingListItems = (shoppingListId: string) => {
   const [listItems, setListItems] = useState<ShoppingListItem[]>([]);

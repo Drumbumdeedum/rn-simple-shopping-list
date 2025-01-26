@@ -52,7 +52,12 @@ const ShoppingList = () => {
   };
 
   const handleItemChecked = async (item: ShoppingListItem) => {
-    await updateShoppingListItemChecked(item.id, !item.checked);
+    const result = await updateShoppingListItemChecked(item.id, !item.checked);
+    setListItems((prev) =>
+      prev.map((item) =>
+        item.id === result.id ? { ...item, checked: result.checked } : item
+      )
+    );
   };
 
   const openEditModal = async (item: ShoppingListItem) => {
