@@ -16,7 +16,7 @@ export const createNewShoppingListItem = async (
   shoppingListId: string,
   itemName: string
 ): Promise<ShoppingListItem> => {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("shopping_list_items")
     .insert({
       shopping_list_id: shoppingListId,
@@ -24,6 +24,7 @@ export const createNewShoppingListItem = async (
     })
     .select("*")
     .single();
+  if (error) throw new Error(error.message);
   return data;
 };
 
@@ -39,7 +40,6 @@ export const updateShoppingListItemChecked = async (
     .eq("id", id)
     .select("*")
     .single();
-
   if (error) throw new Error(error.message);
   return data;
 };

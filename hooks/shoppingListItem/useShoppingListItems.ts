@@ -30,7 +30,10 @@ const useShoppingListItems = (shoppingListId: string) => {
         { event: "INSERT", schema: "public", table: "shopping_list_items" },
         (payload) => {
           if (payload.new?.shopping_list_id === shoppingListId) {
-            setListItems((prev) => [...prev, payload.new as ShoppingListItem]);
+            setListItems((prev) => {
+              const exists = prev.some((item) => item.id === payload.new.id);
+              return exists ? prev : [...prev, payload.new as ShoppingListItem];
+            });
           }
         }
       )

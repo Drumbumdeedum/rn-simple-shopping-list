@@ -43,7 +43,11 @@ const ShoppingList = () => {
 
   const handleCreateNewItem = async () => {
     if (id && typeof id === "string") {
-      await createNewShoppingListItem(id, itemName);
+      const newItem = await createNewShoppingListItem(id, itemName);
+      setListItems((prev) => {
+        const exists = prev.some((item) => item.id === newItem.id);
+        return exists ? prev : [...prev, newItem];
+      });
       if (inputRef.current) {
         inputRef.current.focus();
       }
