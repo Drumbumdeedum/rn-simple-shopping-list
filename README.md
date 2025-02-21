@@ -16,7 +16,11 @@ A real-time shopping list app built using Supabase for authentication and backen
    npm install
    ```
 
-2. Start the app
+2. Supabase setup SQL scripts
+   ```bash
+   Coming soon...
+   ```
+3. Start the app
 
    ```bash
     npx expo start
